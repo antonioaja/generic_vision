@@ -1,25 +1,17 @@
+pub mod helpers;
+pub mod numerical_methods;
+
 use anyhow::*;
 use clap::Parser;
 use imageproc::geometric_transformations::rotate_about_center;
 use imageproc::geometric_transformations::Interpolation;
-use std::ffi::OsStr;
-use std::path::Path;
 
-#[derive(Parser, Debug)]
-#[clap(version, about = "A generic vision program.", long_about = None)]
-struct Args {
-    /// The .dxf file to convert
-    #[clap(short, long, value_parser)]
-    input_file: String,
-
-    /// Activates verbose output, eliminates .elmt file writing
-    #[clap(short, long, value_parser, default_value = "")]
-    output_file: String,
-}
+use crate::helpers::get_extension;
+use crate::helpers::Args;
 
 fn main() -> Result<()> {
     // Collect arguments
-    let args: Args = Args::parse();
+    let args = Args::parse();
     let input_file = &args.input_file;
     let mut output_file = args.output_file;
 
@@ -40,19 +32,21 @@ fn main() -> Result<()> {
         &detection.as_image().to_luma8(),
         std::f32::consts::FRAC_PI_3,
         Interpolation::Nearest,
-        image::Luma([1]),
+        image::Luma([0]),
     );
 
     rotated
         .save("rotate.png")
         .context("Could not save rotated image")?;
 
-    Ok(())
-}
+    let attr = dssim::Dssim::new();
+    let im1 = dssim::load_image(&attr, &output_file)
+        .context(format!("Could not load {}", output_file))?;
+    let im2 = dssim::load_image(&attr, "rotate.png").context("Could not open rotate.png")?;
 
-fn get_extension(filename: &str) -> Result<&str> {
-    Path::new(filename)
-        .extension()
-        .and_then(OsStr::to_str)
-        .context(format!("Could not find extension for {}", filename))
+    let (diff, _) = attr.compare(&im1, im2);
+
+    println!("{}", diff);
+
+    Ok(())
 }
