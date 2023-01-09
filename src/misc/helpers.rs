@@ -7,7 +7,7 @@ use std::path::Path;
 #[clap(version, about = "A generic vision program.", long_about = None)]
 pub struct Args {
     /// Name of input file
-    #[clap(short, long, value_parser)]
+    #[clap(short, long, value_parser, default_value = "test.png")]
     pub input_file: String,
 
     /// Name of output file

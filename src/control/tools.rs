@@ -1,0 +1,67 @@
+#[derive(Copy, Clone)]
+/// Controls position adjustment parameters
+pub struct PositionAdjust {
+    width: u32,
+    length: u32,
+    top_left_corner: [u32; 2],
+    curl: f64,
+    offset: [i32; 2],
+}
+impl PositionAdjust {
+    /// Returns a struct with all fields zero
+    pub fn new() -> PositionAdjust {
+        Self {
+            width: 0,
+            length: 0,
+            top_left_corner: [0, 0],
+            curl: 0.0,
+            offset: [0, 0],
+        }
+    }
+
+    /// Sets all parameters to 0
+    pub fn initialize(&mut self) {
+        self.width = 0;
+        self.length = 0;
+        self.top_left_corner = [0, 0];
+        self.curl = 0.0;
+        self.offset = [0, 0];
+    }
+}
+
+#[derive(Copy, Clone)]
+/// Controls color area tool
+pub struct ColorArea {
+    width: u32,
+    length: u32,
+    top_left_corner: [u32; 2],
+    hue: [u32; 2],
+    saturation: [u32; 2],
+    value: [u32; 2],
+    id: u32,
+}
+impl ColorArea {
+    /// Returns a struct with all fields zero
+    pub fn new() -> ColorArea {
+        Self {
+            width: 0,
+            length: 0,
+            top_left_corner: [0, 0],
+            hue: [0, 0],
+            saturation: [0, 0],
+            value: [0, 0],
+            id: 0,
+        }
+    }
+
+    /// Sets all parameters to 0
+    pub fn initialize(&mut self) {
+        self.width = 0;
+        self.length = 0;
+        self.top_left_corner = [0, 0];
+        self.hue = [0, 0];
+        self.saturation = [0, 0];
+        self.value = [0, 0];
+        self.id = 0;
+    }
+}
