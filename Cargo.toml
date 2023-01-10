@@ -17,3 +17,5 @@ image = "0.24.5"
 edge-detection = "0.2.6"
 imageproc = "0.23.0"
 dssim = "3.2.4"
+uuid = {version = "1.2.2", features = ["v4"] }
+tempdir = "0.3.7"
