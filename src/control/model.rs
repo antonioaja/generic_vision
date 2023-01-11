@@ -1,9 +1,8 @@
 use anyhow::*;
-use dssim::Dssim;
 use image::DynamicImage;
+use image_compare::Algorithm;
 use imageproc::geometric_transformations::rotate_about_center;
 use imageproc::geometric_transformations::Interpolation;
-use tempdir::TempDir;
 use uuid::Uuid;
 
 use crate::control::tools::ColorArea;
@@ -34,60 +33,43 @@ impl Model {
         }
     }
 
-    pub fn find_curl(&mut self, candidate: DynamicImage, curl: &mut f64) -> Result<()> {
-        let tmp_dir = TempDir::new("ope").context("Could not create temporary directory")?;
-        let file_path = tmp_dir.path().join("temp.png");
+    pub fn find_curl(&mut self, candidate: DynamicImage, _curl: &mut f64) -> Result<()> {
+        let detection_candidate: DynamicImage =
+            edge_detection::canny(candidate.to_luma8(), 2.0, 0.2, 0.01).as_image();
+        let detection_master: DynamicImage = edge_detection::canny(
+            image::open(self.image_path.to_string())?.to_luma8(),
+            2.0,
+            0.2,
+            0.01,
+        )
+        .as_image();
 
-        let detection = edge_detection::canny(candidate.to_luma8(), 2.0, 0.2, 0.01).as_image();
-
-        detection.save(&file_path).context(format!(
-            "Could not save edge detection image to {}",
-            &file_path.display()
-        ))?;
-
-        let attr = Dssim::new();
-        let master = dssim::load_image(&attr, &self.image_path).context(format!(
-            "Could not load {} for image comparison",
-            &self.image_path
-        ))?;
-
-        let file_path_rot = tmp_dir.path().join("rotate.png");
-
-        println!("{}", &file_path.display());
-
-        let mut mini_x: i32 = 0;
         let mut mini_y: f64 = 0.0;
+        let mut mini_x = 0;
 
         for i in 0..=360 {
-
             println!("{}", i);
-            rotate_about_center(
-                &detection.to_rgb8(),
+            let rotated = rotate_about_center(
+                &detection_candidate.to_luma8(),
                 (i as f64 * ONE_DEGREE) as f32,
                 Interpolation::Nearest,
-                image::Rgb([0, 0, 0]),
+                image::Luma([0]),
+            );
+
+            let result = image_compare::gray_similarity_structure(
+                &Algorithm::MSSIMSimple,
+                &detection_master.to_luma8(),
+                &rotated,
             )
-            .save(&file_path_rot)
-            .context("Could not save rotated image")?;
+            .context("Could not compare")?;
 
-            let contender = dssim::load_image(&attr, &file_path).context(format!(
-                "Could not load {} for image comparison",
-                &file_path_rot.display()
-            ))?;
-
-            let (diff, _) = attr.compare(&master, &contender);
-
-            if i == 0 || diff < mini_y {
-                mini_y = diff.into();
+            if i == 0 || result.score < mini_y {
+                mini_y = result.score;
                 mini_x = i;
             }
 
-            //println!("{},{}", mini_x, mini_y);
+            println!("{},{}", mini_x, mini_y);
         }
-
-        tmp_dir
-            .close()
-            .context("Could not close temporary directory")?;
 
         Ok(())
     }
