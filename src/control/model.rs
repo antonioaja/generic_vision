@@ -1,8 +1,10 @@
 use anyhow::*;
 use image::DynamicImage;
-use image_compare::Algorithm;
+use image_compare::{Algorithm, Metric};
 use imageproc::geometric_transformations::rotate_about_center;
+use imageproc::geometric_transformations::translate;
 use imageproc::geometric_transformations::Interpolation;
+use std::time::Instant;
 use uuid::Uuid;
 
 use crate::control::tools::ColorArea;
@@ -33,7 +35,9 @@ impl Model {
         }
     }
 
-    pub fn find_curl(&mut self, candidate: DynamicImage, _curl: &mut f64) -> Result<()> {
+    pub fn find_curl(&mut self, candidate: DynamicImage, curl: &mut f64) -> Result<()> {
+        let now = Instant::now();
+
         let detection_candidate: DynamicImage =
             edge_detection::canny(candidate.to_luma8(), 2.0, 0.2, 0.01).as_image();
         let detection_master: DynamicImage = edge_detection::canny(
@@ -48,28 +52,122 @@ impl Model {
         let mut mini_x = 0;
 
         for i in 0..=360 {
-            println!("{}", i);
             let rotated = rotate_about_center(
                 &detection_candidate.to_luma8(),
                 (i as f64 * ONE_DEGREE) as f32,
-                Interpolation::Nearest,
+                Interpolation::Bicubic,
                 image::Luma([0]),
             );
 
-            let result = image_compare::gray_similarity_structure(
-                &Algorithm::MSSIMSimple,
+            let result = image_compare::gray_similarity_histogram(
+                Metric::Correlation,
                 &detection_master.to_luma8(),
                 &rotated,
             )
             .context("Could not compare")?;
 
-            if i == 0 || result.score < mini_y {
-                mini_y = result.score;
+            if i == 0 || result < mini_y {
+                mini_y = result;
                 mini_x = i;
             }
-
-            println!("{},{}", mini_x, mini_y);
         }
+
+        *curl = mini_x as f64;
+        println!("{} ms", now.elapsed().as_millis());
+
+        Ok(())
+    }
+
+    pub fn find_offset(&mut self, candidate: DynamicImage, curl: f64) -> Result<()> {
+        let detection_candidate: DynamicImage =
+            edge_detection::canny(candidate.to_luma8(), 2.0, 0.2, 0.01).as_image();
+        let detection_master: DynamicImage = edge_detection::canny(
+            image::open(self.image_path.to_string())
+                .context(format!("Could not open {}", self.image_path.to_string()))?
+                .to_luma8(),
+            2.0,
+            0.2,
+            0.01,
+        )
+        .as_image();
+
+        let rotated = rotate_about_center(
+            &detection_candidate.to_luma8(),
+            (curl * ONE_DEGREE) as f32,
+            Interpolation::Bicubic,
+            image::Luma([0]),
+        );
+
+        let mut mini_y: f64 = 0.0;
+        let mut mini_x: i32 = 0;
+
+        for i in 1..=(detection_master.width()/2) {
+            let shifted = translate(&rotated, (i as i32,0));
+            
+            let result = image_compare::gray_similarity_histogram(
+                Metric::Intersection,
+                &detection_master.to_luma8(),
+                &shifted,
+            )
+            .context("Could not compare")?;
+
+            if i == 1 || result < mini_y {
+                mini_y = result;
+                mini_x = i as i32;
+            }
+
+            let shifted = translate(&rotated, (-(i as i32),0));
+            
+            let result = image_compare::gray_similarity_histogram(
+                Metric::Intersection,
+                &detection_master.to_luma8(),
+                &shifted,
+            )
+            .context("Could not compare")?;
+
+            if result < mini_y {
+                mini_y = result;
+                mini_x = -(i as i32);
+            }
+        }
+
+        let x = mini_x;
+
+        for i in 1..=(detection_master.height()/2) {
+            let shifted = translate(&rotated, (x,i as i32));
+            
+            let result = image_compare::gray_similarity_histogram(
+                Metric::Intersection,
+                &detection_master.to_luma8(),
+                &shifted,
+            )
+            .context("Could not compare")?;
+
+            if i == 1 || result < mini_y {
+                mini_y = result;
+                mini_x = i as i32;
+            }
+
+            let shifted = translate(&rotated, (x,-(i as i32)));
+            
+            let result = image_compare::gray_similarity_histogram(
+                Metric::Intersection,
+                &detection_master.to_luma8(),
+                &shifted,
+            )
+            .context("Could not compare")?;
+
+            if result < mini_y {
+                mini_y = result;
+                mini_x = -(i as i32);
+            }
+        }
+
+        let y = mini_x;
+
+        println!("{},{}",x,y);
+
+        translate(&rotated, (x,y)).save("shift.png")?;
 
         Ok(())
     }
