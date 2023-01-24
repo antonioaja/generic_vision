@@ -40,13 +40,9 @@ impl Model {
 
         let detection_candidate: DynamicImage =
             edge_detection::canny(candidate.to_luma8(), 2.0, 0.2, 0.01).as_image();
-        let detection_master: DynamicImage = edge_detection::canny(
-            image::open(self.image_path.to_string())?.to_luma8(),
-            2.0,
-            0.2,
-            0.01,
-        )
-        .as_image();
+        let detection_master: DynamicImage =
+            edge_detection::canny(image::open(&self.image_path)?.to_luma8(), 2.0, 0.2, 0.01)
+                .as_image();
 
         let mut mini_y: f64 = 0.0;
         let mut mini_x = 0;
@@ -82,8 +78,8 @@ impl Model {
         let detection_candidate: DynamicImage =
             edge_detection::canny(candidate.to_luma8(), 2.0, 0.2, 0.01).as_image();
         let detection_master: DynamicImage = edge_detection::canny(
-            image::open(self.image_path.to_string())
-                .context(format!("Could not open {}", self.image_path.to_string()))?
+            image::open(&self.image_path)
+                .context(format!("Could not open {}", &self.image_path))?
                 .to_luma8(),
             2.0,
             0.2,
@@ -101,9 +97,9 @@ impl Model {
         let mut mini_y: f64 = 0.0;
         let mut mini_x: i32 = 0;
 
-        for i in 1..=(detection_master.width()/2) {
-            let shifted = translate(&rotated, (i as i32,0));
-            
+        for i in 1..=(detection_master.width() / 2) {
+            let shifted = translate(&rotated, (i as i32, 0));
+
             let result = image_compare::gray_similarity_histogram(
                 Metric::Intersection,
                 &detection_master.to_luma8(),
@@ -116,8 +112,8 @@ impl Model {
                 mini_x = i as i32;
             }
 
-            let shifted = translate(&rotated, (-(i as i32),0));
-            
+            let shifted = translate(&rotated, (-(i as i32), 0));
+
             let result = image_compare::gray_similarity_histogram(
                 Metric::Intersection,
                 &detection_master.to_luma8(),
@@ -133,9 +129,9 @@ impl Model {
 
         let x = mini_x;
 
-        for i in 1..=(detection_master.height()/2) {
-            let shifted = translate(&rotated, (x,i as i32));
-            
+        for i in 1..=(detection_master.height() / 2) {
+            let shifted = translate(&rotated, (x, i as i32));
+
             let result = image_compare::gray_similarity_histogram(
                 Metric::Intersection,
                 &detection_master.to_luma8(),
@@ -148,8 +144,8 @@ impl Model {
                 mini_x = i as i32;
             }
 
-            let shifted = translate(&rotated, (x,-(i as i32)));
-            
+            let shifted = translate(&rotated, (x, -(i as i32)));
+
             let result = image_compare::gray_similarity_histogram(
                 Metric::Intersection,
                 &detection_master.to_luma8(),
@@ -165,9 +161,9 @@ impl Model {
 
         let y = mini_x;
 
-        println!("{},{}",x,y);
+        println!("{},{}", x, y);
 
-        translate(&rotated, (x,y)).save("shift.png")?;
+        translate(&rotated, (x, y)).save("shift.png")?;
 
         Ok(())
     }

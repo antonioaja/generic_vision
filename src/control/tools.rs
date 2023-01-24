@@ -1,4 +1,7 @@
 use image::DynamicImage;
+use rgb::FromSlice;
+
+use super::colorspaces;
 
 #[derive(Clone)]
 /// Controls position adjustment parameters
@@ -62,6 +65,19 @@ impl ColorArea {
         self.saturation = [0, 0];
         self.value = [0, 0];
         self.id = 0;
+    }
+
+    /// Returns a percentage match to the set parameters
+    pub fn check(&self, input: DynamicImage) -> f64{
+        let source = input.as_bytes().as_rgb();
+
+        let hsv_rep = colorspaces::HSV::from_rgb(source[0]);
+
+        println!("{:?}", source[0]);
+        println!("{:?}", hsv_rep);
+        
+
+        100.00
     }
 }
 

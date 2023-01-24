@@ -276,6 +276,7 @@ dependencies = [
  "image",
  "image-compare",
  "imageproc",
+ "rgb",
  "uuid",
 ]
 
@@ -789,6 +790,15 @@ dependencies = [
  "crossbeam-deque",
  "crossbeam-utils",
  "num_cpus",
+]
+
+[[package]]
+name = "rgb"
+version = "0.8.34"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3603b7d71ca82644f79b5a06d1220e9a58ede60bd32255f698cb1af8838b8db3"
+dependencies = [
+ "bytemuck",
 ]
 
 [[package]]

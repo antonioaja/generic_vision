@@ -18,3 +18,4 @@ edge-detection = "0.2.6"
 imageproc = "0.23.0"
 uuid = {version = "1.2.2", features = ["v4"] }
 image-compare = "0.2.4"
+rgb = "0.8.34"
