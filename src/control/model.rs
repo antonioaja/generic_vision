@@ -35,6 +35,7 @@ impl Model {
         }
     }
 
+    /// Finds the angle offset compared to the master image
     pub fn find_curl(&mut self, candidate: DynamicImage, curl: &mut f64) -> Result<()> {
         let now = Instant::now();
 
@@ -74,6 +75,7 @@ impl Model {
         Ok(())
     }
 
+    /// Finds the position offset compared to the master image
     pub fn find_offset(&mut self, candidate: DynamicImage, curl: f64) -> Result<()> {
         let detection_candidate: DynamicImage =
             edge_detection::canny(candidate.to_luma8(), 2.0, 0.2, 0.01).as_image();

@@ -1,7 +1,8 @@
 use image::DynamicImage;
 use rgb::FromSlice;
+use std::time::Instant;
 
-use super::colorspaces;
+use super::colorspaces::{self, HSV};
 
 #[derive(Clone)]
 /// Controls position adjustment parameters
@@ -37,9 +38,9 @@ pub struct ColorArea {
     width: u32,
     length: u32,
     top_left_corner: [u32; 2],
-    hue: [u32; 2],
-    saturation: [u32; 2],
-    value: [u32; 2],
+    hue: [f64; 2],
+    saturation: [f64; 2],
+    value: [f64; 2],
     id: u32,
 }
 impl ColorArea {
@@ -49,9 +50,9 @@ impl ColorArea {
             width: 0,
             length: 0,
             top_left_corner: [0, 0],
-            hue: [0, 0],
-            saturation: [0, 0],
-            value: [0, 0],
+            hue: [0.0, 0.0],
+            saturation: [0.0, 0.0],
+            value: [0.0, 0.0],
             id: 0,
         }
     }
@@ -61,21 +62,26 @@ impl ColorArea {
         self.width = 0;
         self.length = 0;
         self.top_left_corner = [0, 0];
-        self.hue = [0, 0];
-        self.saturation = [0, 0];
-        self.value = [0, 0];
+        self.hue = [0.0, 0.0];
+        self.saturation = [0.0, 0.0];
+        self.value = [0.0, 0.0];
         self.id = 0;
     }
 
     /// Returns a percentage match to the set parameters
-    pub fn check(&self, input: DynamicImage) -> f64{
-        let source = input.as_bytes().as_rgb();
+    pub fn check(&self, input: DynamicImage) -> f64 {
+        let now = Instant::now();
 
-        let hsv_rep = colorspaces::HSV::from_rgb(source[0]);
+        let source: Vec<HSV> = input
+            .into_bytes()
+            .as_rgb()
+            .iter()
+            .map(|x| colorspaces::HSV::from_rgb8(*x))
+            .collect();
 
-        println!("{:?}", source[0]);
-        println!("{:?}", hsv_rep);
         
+
+        println!("{} ms", now.elapsed().as_millis());
 
         100.00
     }
