@@ -42,7 +42,7 @@ impl HSV {
         };
 
         if hue < 0.0 {
-            hue = hue + 360.0;
+            hue += 360.0;
         }
 
         let saturation = if c_max == 0.0 { 0.0 } else { delta / c_max };
@@ -71,19 +71,19 @@ impl HSV {
 
         let r = if (r_prime + m) * 255.0 > 255.0 {
             0.0
-        }else {
+        } else {
             (r_prime + m) * 255.0
         };
 
         let g = if (g_prime + m) * 255.0 > 255.0 {
             0.0
-        }else {
+        } else {
             (g_prime + m) * 255.0
         };
 
         let b = if (b_prime + m) * 255.0 > 255.0 {
             0.0
-        }else {
+        } else {
             (b_prime + m) * 255.0
         };
 

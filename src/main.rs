@@ -1,6 +1,6 @@
 pub mod control;
 pub mod misc;
-pub mod tests;
+mod tests;
 
 use anyhow::*;
 use control::colorspaces::HSV;
