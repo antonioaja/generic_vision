@@ -1,6 +1,6 @@
 use anyhow::*;
 use image::DynamicImage;
-use image_compare::{Algorithm, Metric};
+use image_compare::*;
 use imageproc::geometric_transformations::rotate_about_center;
 use imageproc::geometric_transformations::translate;
 use imageproc::geometric_transformations::Interpolation;

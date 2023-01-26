@@ -1,6 +1,6 @@
 use rgb::RGB;
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd)]
 /// The HSV pixel
 pub struct HSV {
     /// Hue (in degrees)
@@ -15,6 +15,7 @@ impl HSV {
         HSV { h, s, v }
     }
 
+    /// Converts an 8-bit rgb pixel into an hsv pixel
     pub fn from_rgb8(rgb_pixel: RGB<u8>) -> HSV {
         let r_prime = rgb_pixel.r as f64 / 255.0;
         let g_prime = rgb_pixel.g as f64 / 255.0;
@@ -23,6 +24,7 @@ impl HSV {
         let c_max = r_prime.max(g_prime.max(b_prime));
         let c_min = r_prime.min(g_prime.min(b_prime));
 
+        // Account for floating point error (avoids divide by zero error)
         let delta = if c_max - c_min == 0.0 {
             f64::MIN_POSITIVE
         } else {
@@ -41,6 +43,7 @@ impl HSV {
             0.0
         };
 
+        // Accounts for negative degree wrap around
         if hue < 0.0 {
             hue += 360.0;
         }
@@ -54,7 +57,8 @@ impl HSV {
         }
     }
 
-    pub fn to_rgb8(hsv_pixel: HSV) -> RGB<u8> {
+    /// Converts an hsv pixel to an 8-bit rbg pixel
+    pub fn to_rgb8(hsv_pixel: HSV) -> Option<RGB<u8>> {
         let c = hsv_pixel.v * hsv_pixel.s;
         let x = c * (1.0 - ((hsv_pixel.h / 60.0) % 2.0 - 1.0).abs());
         let m = hsv_pixel.v - c;
@@ -66,31 +70,30 @@ impl HSV {
             180..=239 => (0.0, x, c),
             240..=299 => (x, 0.0, c),
             300..=359 => (c, 0.0, x),
-            _ => (0.0, 0.0, 0.0),
+            _ => return None,
         };
 
+        // Account for u8 overflow
         let r = if (r_prime + m) * 255.0 > 255.0 {
             0.0
         } else {
             (r_prime + m) * 255.0
         };
-
         let g = if (g_prime + m) * 255.0 > 255.0 {
             0.0
         } else {
             (g_prime + m) * 255.0
         };
-
         let b = if (b_prime + m) * 255.0 > 255.0 {
             0.0
         } else {
             (b_prime + m) * 255.0
         };
 
-        RGB {
+        Some(RGB {
             r: r.round() as u8,
             g: g.round() as u8,
             b: b.round() as u8,
-        }
+        })
     }
 }
