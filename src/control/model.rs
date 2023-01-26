@@ -13,7 +13,7 @@ use crate::control::tools::PositionAdjust;
 /// One degree in radians
 const ONE_DEGREE: f64 = std::f64::consts::PI / 180.0;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Default, PartialEq)]
 /// An image to compare against
 pub struct Model {
     pos_adjust: PositionAdjust,

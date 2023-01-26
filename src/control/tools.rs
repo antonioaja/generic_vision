@@ -1,10 +1,9 @@
 use image::DynamicImage;
-use rgb::FromSlice;
-use std::time::Instant;
+use rgb::{RGB};
 
 use super::colorspaces::{self, HSV};
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Default, PartialEq)]
 /// Controls position adjustment parameters
 pub struct PositionAdjust {
     width: u32,
@@ -32,7 +31,7 @@ impl PositionAdjust {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 /// Controls color area tool
 pub struct ColorArea {
     width: u32,
@@ -45,7 +44,7 @@ pub struct ColorArea {
 }
 impl ColorArea {
     /// Returns a struct with all fields zero
-    pub fn new() -> ColorArea {
+    fn new() -> ColorArea {
         Self {
             width: 0,
             length: 0,
@@ -69,19 +68,14 @@ impl ColorArea {
     }
 
     /// Returns a percentage match to the set parameters
-    pub fn check(&self, input: DynamicImage) -> f64 {
-        let now = Instant::now();
-
+    pub fn check(&self, input: &[RGB<u8>], width: u32, height:u32) -> f64 {
         let source: Vec<HSV> = input
-            .into_bytes()
-            .as_rgb()
             .iter()
             .map(|x| colorspaces::HSV::from_rgb8(*x))
             .collect();
 
+        println!("{}", source.len() % width as usize);
         
-
-        println!("{} ms", now.elapsed().as_millis());
 
         100.00
     }

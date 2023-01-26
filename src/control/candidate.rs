@@ -1,7 +1,7 @@
 use image::DynamicImage;
 use uuid::Uuid;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Default, PartialEq)]
 /// A candidate image to compare to model
 pub struct Candidate {
     image: DynamicImage,
