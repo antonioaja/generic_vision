@@ -2,21 +2,21 @@ use rgb::RGB;
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd)]
 /// The HSV pixel
-pub struct HSV {
+pub struct HSV<T> {
     /// Hue (in degrees)
-    pub h: f64,
+    pub h: T,
     /// Saturation (between 0 and 1)
-    pub s: f64,
+    pub s: T,
     /// Value (between 0 and 1)
-    pub v: f64,
+    pub v: T,
 }
-impl HSV {
-    pub fn new(h: f64, s: f64, v: f64) -> HSV {
+impl HSV<f64> {
+    pub fn new(h: f64, s: f64, v: f64) -> HSV<f64> {
         HSV { h, s, v }
     }
 
     /// Converts an 8-bit rgb pixel into an hsv pixel
-    pub fn from_rgb8(rgb_pixel: RGB<u8>) -> HSV {
+    pub fn from_rgb8(rgb_pixel: RGB<u8>) -> HSV<f64> {
         let r_prime = rgb_pixel.r as f64 / 255.0;
         let g_prime = rgb_pixel.g as f64 / 255.0;
         let b_prime = rgb_pixel.b as f64 / 255.0;
@@ -58,7 +58,7 @@ impl HSV {
     }
 
     /// Converts an hsv pixel to an 8-bit rbg pixel
-    pub fn to_rgb8(hsv_pixel: HSV) -> Option<RGB<u8>> {
+    pub fn to_rgb8(hsv_pixel: HSV<f64>) -> Option<RGB<u8>> {
         let c = hsv_pixel.v * hsv_pixel.s;
         let x = c * (1.0 - ((hsv_pixel.h / 60.0) % 2.0 - 1.0).abs());
         let m = hsv_pixel.v - c;
@@ -95,5 +95,35 @@ impl HSV {
             g: g.round() as u8,
             b: b.round() as u8,
         })
+    }
+}
+
+#[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd)]
+pub struct Luma<T> {
+    luminance: T,
+}
+impl Luma<u8> {
+    /// Creates a blank Luma pixel
+    pub fn new() -> Luma<u8> {
+        Luma { luminance: 0 }
+    }
+
+    /// Converts an 8-bit RGB pixel into a Luma pixel
+    pub fn from_rgb8(rgb_pixel: RGB<u8>) -> Luma<u8> {
+        Luma {
+            luminance: (0.299 * (rgb_pixel.r as f64).powi(2)
+                + 0.587 * (rgb_pixel.g as f64).powi(2)
+                + 0.114 * (rgb_pixel.b as f64).powi(2))
+            .sqrt().round() as u8,
+        }
+    }
+
+    /// Converts a luma pixel into an 8-bit RGB pixel
+    pub fn to_rgb8(luma_pixel: Luma<u8>) -> RGB<u8> {
+        RGB {
+            r: luma_pixel.luminance,
+            g: luma_pixel.luminance,
+            b: luma_pixel.luminance,
+        }
     }
 }

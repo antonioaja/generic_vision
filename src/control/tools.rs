@@ -69,12 +69,12 @@ impl ColorArea {
 
     /// Returns a percentage match to the set parameters
     pub fn check(&self, input: &[RGB<u8>], width: u32, height:u32) -> f64 {
-        let source: Vec<HSV> = input
+        let source: Vec<HSV<f64>> = input
             .iter()
             .map(|x| colorspaces::HSV::from_rgb8(*x))
             .collect();
 
-        println!("{}", source.len() % width as usize);
+        
         
 
         100.00
