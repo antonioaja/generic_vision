@@ -127,3 +127,15 @@ impl Luma<u8> {
         }
     }
 }
+
+pub trait Pixel {
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<f64>;
+}
+
+impl Pixel for Vec<HSV<f64>> {
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<f64> {
+       let one = y * w;
+       self[(one + x ) as usize]
+        
+    }
+}
