@@ -17,7 +17,7 @@ const ONE_DEGREE: f64 = std::f64::consts::PI / 180.0;
 /// An image to compare against
 pub struct Model {
     pos_adjust: PositionAdjust,
-    color_tools: Vec<ColorArea>,
+    color_tools: Vec<ColorArea<'static>>,
     uuid: Uuid,
     name: String,
     image_path: String,

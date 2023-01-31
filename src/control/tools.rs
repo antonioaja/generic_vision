@@ -1,5 +1,5 @@
 use image::DynamicImage;
-use rgb::{RGB};
+use rgb::RGB;
 
 use super::colorspaces::{self, HSV};
 
@@ -15,8 +15,8 @@ impl PositionAdjust {
     /// Returns a struct with all fields zero
     pub fn new(w: u32, h: u32) -> PositionAdjust {
         Self {
-            width: 0,
-            length: 0,
+            width: w,
+            length: h,
             top_left_corner: [0, 0],
             base_image: DynamicImage::new_luma8(w, h),
         }
@@ -33,18 +33,19 @@ impl PositionAdjust {
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 /// Controls color area tool
-pub struct ColorArea {
+pub struct ColorArea<'a> {
     width: u32,
     length: u32,
     top_left_corner: [u32; 2],
     hue: [f64; 2],
     saturation: [f64; 2],
     value: [f64; 2],
-    id: u32,
+    id: u8,
+    name: &'a str,
 }
-impl ColorArea {
+impl ColorArea<'static> {
     /// Returns a struct with all fields zero
-    fn new() -> ColorArea {
+    fn new() -> ColorArea<'static> {
         Self {
             width: 0,
             length: 0,
@@ -53,6 +54,7 @@ impl ColorArea {
             saturation: [0.0, 0.0],
             value: [0.0, 0.0],
             id: 0,
+            name: "",
         }
     }
 
@@ -68,20 +70,17 @@ impl ColorArea {
     }
 
     /// Returns a percentage match to the set parameters
-    pub fn check(&self, input: &[RGB<u8>], width: u32, height:u32) -> f64 {
+    pub fn check(&self, input: &[RGB<u8>], width: u32, height: u32) -> f64 {
         let source: Vec<HSV<f64>> = input
             .iter()
             .map(|x| colorspaces::HSV::from_rgb8(*x))
             .collect();
 
-        
-        
-
         100.00
     }
 }
 
-impl Default for ColorArea {
+impl Default for ColorArea<'static> {
     fn default() -> Self {
         Self::new()
     }
