@@ -1,7 +1,7 @@
+use super::colorspaces::{self, Pixel, HSV};
 use image::DynamicImage;
 use rgb::RGB;
 use std::time::Instant;
-use super::colorspaces::{self, Pixel, HSV};
 
 #[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
 pub struct Point<N> {
@@ -78,7 +78,7 @@ impl ColorArea {
     /// Returns a percentage match to the set parameters
     pub fn check(&self, input: &[RGB<u8>], width: u32, height: u32) -> f64 {
         let now = Instant::now();
-        
+
         let source: Vec<HSV<f64>> = input
             .iter()
             .map(|x| colorspaces::HSV::from_rgb8(*x))

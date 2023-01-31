@@ -11,10 +11,6 @@ pub struct HSV<T> {
     pub v: T,
 }
 impl HSV<f64> {
-    pub fn new(h: f64, s: f64, v: f64) -> HSV<f64> {
-        HSV { h, s, v }
-    }
-
     /// Converts an 8-bit rgb pixel into an hsv pixel
     pub fn from_rgb8(rgb_pixel: RGB<u8>) -> HSV<f64> {
         let r_prime = rgb_pixel.r as f64 / 255.0;
@@ -55,6 +51,10 @@ impl HSV<f64> {
             s: saturation,
             v: c_max,
         }
+    }
+
+    pub fn new(h: f64, s: f64, v: f64) -> HSV<f64> {
+        HSV { h, s, v }
     }
 
     /// Converts an hsv pixel to an 8-bit rbg pixel
@@ -100,22 +100,23 @@ impl HSV<f64> {
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd)]
 pub struct Luma<T> {
-    luminance: T,
+    pub luminance: T,
 }
 impl Luma<u8> {
-    /// Creates a blank Luma pixel
-    pub fn new() -> Luma<u8> {
-        Luma { luminance: 0 }
-    }
-
     /// Converts an 8-bit RGB pixel into a Luma pixel
     pub fn from_rgb8(rgb_pixel: RGB<u8>) -> Luma<u8> {
         Luma {
             luminance: (0.299 * (rgb_pixel.r as f64).powi(2)
                 + 0.587 * (rgb_pixel.g as f64).powi(2)
                 + 0.114 * (rgb_pixel.b as f64).powi(2))
-            .sqrt().round() as u8,
+            .sqrt()
+            .round() as u8,
         }
+    }
+
+    /// Creates a blank Luma pixel
+    pub fn new() -> Luma<u8> {
+        Luma { luminance: 0 }
     }
 
     /// Converts a luma pixel into an 8-bit RGB pixel
@@ -128,14 +129,25 @@ impl Luma<u8> {
     }
 }
 
-pub trait Pixel {
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<f64>;
+pub trait Pixel<T> {
+    /// Interpret slice as a 2d coordinate system, returning a specific pixel
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> T;
 }
-
-impl Pixel for Vec<HSV<f64>> {
+impl Pixel<HSV<f64>> for Vec<HSV<f64>> {
     fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<f64> {
-       let one = y * w;
-       self[(one + x ) as usize]
-        
+        let one = y * w;
+        self[(one + x) as usize]
+    }
+}
+impl Pixel<Luma<u8>> for Vec<Luma<u8>> {
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> Luma<u8> {
+        let one = y * w;
+        self[(one + x) as usize]
+    }
+}
+impl Pixel<RGB<u8>> for Vec<RGB<u8>> {
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> RGB<u8> {
+        let one = y * w;
+        self[(one + x) as usize]
     }
 }
