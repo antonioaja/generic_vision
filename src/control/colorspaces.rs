@@ -102,29 +102,37 @@ impl HSV<f64> {
 pub struct Luma<T> {
     pub luminance: T,
 }
-impl Luma<u8> {
+impl<T> Luma<T> {
     /// Converts an 8-bit RGB pixel into a Luma pixel
-    pub fn from_rgb8(rgb_pixel: RGB<u8>) -> Luma<u8> {
+    pub fn from_rgb8(rgb_pixel: RGB<u8>) -> Luma<T>
+    where
+        T: std::convert::From<f64>,
+    {
         Luma {
-            luminance: (0.299 * (rgb_pixel.r as f64).powi(2)
+            luminance: ((0.299 * (rgb_pixel.r as f64).powi(2)
                 + 0.587 * (rgb_pixel.g as f64).powi(2)
                 + 0.114 * (rgb_pixel.b as f64).powi(2))
             .sqrt()
-            .round() as u8,
+            .round())
+            .into(),
         }
     }
 
-    /// Creates a blank Luma pixel
-    pub fn new() -> Luma<u8> {
-        Luma { luminance: 0 }
+    /// Creates a Luma pixel
+    pub fn new(luminance: T) -> Luma<T> {
+        Luma { luminance }
     }
 
     /// Converts a luma pixel into an 8-bit RGB pixel
-    pub fn to_rgb8(luma_pixel: Luma<u8>) -> RGB<u8> {
+    pub fn to_rgb8(luma_pixel: Luma<T>) -> RGB<u8>
+    where
+        u8: From<T>,
+        T: Copy,
+    {
         RGB {
-            r: luma_pixel.luminance,
-            g: luma_pixel.luminance,
-            b: luma_pixel.luminance,
+            r: luma_pixel.luminance.into(),
+            g: luma_pixel.luminance.into(),
+            b: luma_pixel.luminance.into(),
         }
     }
 }
@@ -133,20 +141,29 @@ pub trait Pixel<T> {
     /// Interpret slice as a 2d coordinate system, returning a specific pixel
     fn get_pixel(&self, x: u32, y: u32, w: u32) -> T;
 }
-impl Pixel<HSV<f64>> for Vec<HSV<f64>> {
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<f64> {
+impl<T> Pixel<HSV<T>> for Vec<HSV<T>>
+where
+    T: Copy,
+{
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<T> {
         let one = y * w;
         self[(one + x) as usize]
     }
 }
-impl Pixel<Luma<u8>> for Vec<Luma<u8>> {
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> Luma<u8> {
+impl<T> Pixel<Luma<T>> for Vec<Luma<T>>
+where
+    T: Copy,
+{
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> Luma<T> {
         let one = y * w;
         self[(one + x) as usize]
     }
 }
-impl Pixel<RGB<u8>> for Vec<RGB<u8>> {
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> RGB<u8> {
+impl<T> Pixel<RGB<T>> for Vec<RGB<T>>
+where
+    T: Copy,
+{
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> RGB<T> {
         let one = y * w;
         self[(one + x) as usize]
     }
