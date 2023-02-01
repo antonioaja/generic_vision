@@ -3,8 +3,11 @@ pub mod misc;
 mod tests;
 
 use anyhow::*;
+use control::tools::Point;
 use image::EncodableLayout;
 use rgb::FromSlice;
+
+use crate::control::tools::Dimensions;
 // use clap::Parser;
 // use imageproc::geometric_transformations::rotate_about_center;
 // use imageproc::geometric_transformations::Interpolation;
@@ -13,26 +16,25 @@ use rgb::FromSlice;
 // use crate::misc::helpers::Args;
 
 fn main() -> Result<()> {
-    // let mut test_model =
-    //     control::model::Model::new("ope".to_string(), "test.png".to_string(), 10, 10);
-
     let ope = image::open("4k_rain.png").context("Could not open test_rotate.png")?;
 
-    // let mut var: f64 = 0.0;
+    let color_test = control::tools::ColorArea::new(
+        Dimensions {
+            width: ope.width(),
+            height: ope.height(),
+        },
+        Point { x: 0, y: 0 },
+        [0.0, 180.0],
+        [0.0, 1.0],
+        [0.0, 1.0],
+        1,
+        "4k_rain",
+    );
 
-    // test_model
-    //     .find_curl(ope.clone(), &mut var)
-    //     .context("Error during curl calculation")?;
+    let color_match_percentage =
+        color_test.check(ope.clone().into_rgb8().as_bytes().as_rgb(), ope.width());
 
-    // test_model.find_offset(ope, var)?;
-
-    // println!("{}", var);
-
-    //let color_test = control::tools::ColorArea::default();
-
-    //color_test.check(ope.clone().into_rgb8().as_bytes().as_rgb(), ope.width());
-
-    //println!("{},{}\n{}", ope.width(), ope.height(), ope.width() * ope.height());
+    println!("{}", color_match_percentage);
 
     Ok(())
 }

@@ -2,45 +2,28 @@ use super::colorspaces::{self, Pixel, HSV};
 use image::DynamicImage;
 use rgb::RGB;
 
-#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
-pub struct Point<N> {
-    pub x: N,
-    pub y: N,
-}
-
 #[derive(Clone, Debug, Default, PartialEq)]
 /// Controls position adjustment parameters
 pub struct PositionAdjust {
-    width: u32,
-    height: u32,
-    top_left_corner: [u32; 2],
+    dimension: Dimensions<u32>,
+    top_left_corner: Point<u32>,
     base_image: DynamicImage,
 }
 impl PositionAdjust {
     /// Returns a struct with all fields zero
-    pub fn new(w: u32, h: u32) -> PositionAdjust {
+    pub fn new(dimension: Dimensions<u32>, top_left_corner: Point<u32>) -> PositionAdjust {
         Self {
-            width: w,
-            height: h,
-            top_left_corner: [0, 0],
-            base_image: DynamicImage::new_luma8(w, h),
+            dimension,
+            top_left_corner,
+            base_image: DynamicImage::new_luma8(dimension.width, dimension.height),
         }
-    }
-
-    /// Sets all parameters to 0
-    pub fn initialize(&mut self, w: u32, h: u32) {
-        self.width = 0;
-        self.height = 0;
-        self.top_left_corner = [0, 0];
-        self.base_image = DynamicImage::new_luma8(w, h);
     }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
 /// Controls color area tool
 pub struct ColorArea {
-    width: u32,
-    height: u32,
+    dimension: Dimensions<u32>,
     top_left_corner: Point<u32>,
     hue: [f64; 2],
     saturation: [f64; 2],
@@ -49,40 +32,6 @@ pub struct ColorArea {
     name: &'static str,
 }
 impl ColorArea {
-    ///  Creates Struct given parameters
-    pub fn new(
-        width: u32,
-        height: u32,
-        top_left_corner: Point<u32>,
-        hue: [f64; 2],
-        saturation: [f64; 2],
-        value: [f64; 2],
-        id: u8,
-        name: &'static str,
-    ) -> ColorArea {
-        Self {
-            width,
-            height,
-            top_left_corner,
-            hue,
-            saturation,
-            value,
-            id,
-            name,
-        }
-    }
-
-    // /// Sets all parameters to 0
-    // pub fn initialize(&mut self) {
-    //     self.width = 0;
-    //     self.height = 0;
-    //     self.top_left_corner = Point { x: 0, y: 0 };
-    //     self.hue = [0.0, 0.0];
-    //     self.saturation = [0.0, 0.0];
-    //     self.value = [0.0, 0.0];
-    //     self.id = 0;
-    // }
-
     /// Returns a percentage match to the set parameters
     pub fn check(&self, input: &[RGB<u8>], width: u32) -> f64 {
         let source: Vec<HSV<f64>> = input
@@ -91,21 +40,98 @@ impl ColorArea {
             .collect();
 
         let mut count: u32 = 0;
-        let total_area = self.height * self.width;
+        let total_area = self.dimension.height * self.dimension.width;
 
-        for y in self.top_left_corner.y..=(self.top_left_corner.y + self.height) {
-            for x in self.top_left_corner.x..=(self.top_left_corner.x + self.width) {
+        for y in self.top_left_corner.y..=(self.top_left_corner.y + self.dimension.height) {
+            for x in self.top_left_corner.x..=(self.top_left_corner.x + self.dimension.width) {
                 let pixel = source.get_pixel(x, y, width);
 
-                if pixel.h > self.hue[1] || pixel.h < self.hue[0] {
-                } else if pixel.s > self.saturation[1] || pixel.s < self.saturation[0] {
-                } else if pixel.v > self.value[1] || pixel.v < self.value[0] {
+                if pixel.h > self.hue[1]
+                    || pixel.h < self.hue[0]
+                    || pixel.s > self.saturation[1]
+                    || pixel.s < self.saturation[0]
+                    || pixel.v > self.value[1]
+                    || pixel.v < self.value[0]
+                {
                 } else {
                     count += 1;
                 }
             }
         }
 
-        (count / total_area).into()
+        count as f64 / total_area as f64
+    }
+
+    ///  Creates Struct given parameters
+    pub fn new(
+        dimension: Dimensions<u32>,
+        top_left_corner: Point<u32>,
+        hue: [f64; 2],
+        saturation: [f64; 2],
+        value: [f64; 2],
+        id: u8,
+        name: &'static str,
+    ) -> ColorArea {
+        Self {
+            dimension,
+            top_left_corner,
+            hue,
+            saturation,
+            value,
+            id,
+            name,
+        }
+    }
+}
+
+#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
+/// A 2d point in space
+pub struct Point<N> {
+    pub x: N,
+    pub y: N,
+}
+
+#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
+/// Dimensions of 2d object
+pub struct Dimensions<N> {
+    pub width: N,
+    pub height: N,
+}
+
+#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
+/// A ranged object
+pub struct Range<N> {
+    pub lower: N,
+    pub upper: N,
+}
+
+impl<T> Range<T>
+where
+    T: std::cmp::PartialOrd,
+{
+    /// Returns whether given value is within a given range (inclusive)
+    pub fn within_range_inclusive(&self, value: T) -> bool {
+        if self.upper > self.lower {
+            if value <= self.upper && value >= self.lower {
+                return true;
+            }
+        } else if value >= self.upper && value <= self.lower {
+            return true;
+        }
+
+        false
+    }
+
+    /// Returns whether given value is within a given range (exclusive)
+    pub fn within_range_exclusive(&self, value: T) -> bool {
+        if self.upper > self.lower {
+            if value < self.upper && value > self.lower {
+                return true;
+            }
+        } else if value > self.upper && value < self.lower {
+            return true;
+        }
+
+        false
     }
 }

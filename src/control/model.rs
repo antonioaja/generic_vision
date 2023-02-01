@@ -1,14 +1,11 @@
 use anyhow::*;
 use image::DynamicImage;
 use image_compare::*;
-use imageproc::geometric_transformations::rotate_about_center;
-use imageproc::geometric_transformations::translate;
-use imageproc::geometric_transformations::Interpolation;
+use imageproc::geometric_transformations::*;
 use std::time::Instant;
 use uuid::Uuid;
 
-use crate::control::tools::ColorArea;
-use crate::control::tools::PositionAdjust;
+use crate::control::tools::*;
 
 /// One degree in radians
 const ONE_DEGREE: f64 = std::f64::consts::PI / 180.0;
@@ -25,9 +22,15 @@ pub struct Model {
 
 impl Model {
     /// Returns blank Model object with random uuid
-    pub fn new(name: String, image_path: String, w: u32, h: u32) -> Model {
+    pub fn new(name: String, image_path: String) -> Model {
         Self {
-            pos_adjust: PositionAdjust::new(w, h),
+            pos_adjust: PositionAdjust::new(
+                Dimensions {
+                    width: 0,
+                    height: 0,
+                },
+                Point { x: 0, y: 0 },
+            ),
             color_tools: vec![],
             uuid: Uuid::new_v4(),
             name,
