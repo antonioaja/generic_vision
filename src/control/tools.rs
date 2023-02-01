@@ -25,9 +25,9 @@ impl PositionAdjust {
 pub struct ColorArea {
     dimension: Dimensions<u32>,
     top_left_corner: Point<u32>,
-    hue: [f64; 2],
-    saturation: [f64; 2],
-    value: [f64; 2],
+    hue: Range<f64>,
+    saturation: Range<f64>,
+    value: Range<f64>,
     id: u8,
     name: &'static str,
 }
@@ -46,14 +46,10 @@ impl ColorArea {
             for x in self.top_left_corner.x..=(self.top_left_corner.x + self.dimension.width) {
                 let pixel = source.get_pixel(x, y, width);
 
-                if pixel.h > self.hue[1]
-                    || pixel.h < self.hue[0]
-                    || pixel.s > self.saturation[1]
-                    || pixel.s < self.saturation[0]
-                    || pixel.v > self.value[1]
-                    || pixel.v < self.value[0]
+                if self.hue.within_range_inclusive(pixel.h)
+                    && self.saturation.within_range_inclusive(pixel.s)
+                    && self.value.within_range_inclusive(pixel.v)
                 {
-                } else {
                     count += 1;
                 }
             }
@@ -66,9 +62,9 @@ impl ColorArea {
     pub fn new(
         dimension: Dimensions<u32>,
         top_left_corner: Point<u32>,
-        hue: [f64; 2],
-        saturation: [f64; 2],
-        value: [f64; 2],
+        hue: Range<f64>,
+        saturation: Range<f64>,
+        value: Range<f64>,
         id: u8,
         name: &'static str,
     ) -> ColorArea {

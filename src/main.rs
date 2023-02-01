@@ -7,7 +7,7 @@ use control::tools::Point;
 use image::EncodableLayout;
 use rgb::FromSlice;
 
-use crate::control::tools::Dimensions;
+use crate::control::tools::*;
 // use clap::Parser;
 // use imageproc::geometric_transformations::rotate_about_center;
 // use imageproc::geometric_transformations::Interpolation;
@@ -20,13 +20,22 @@ fn main() -> Result<()> {
 
     let color_test = control::tools::ColorArea::new(
         Dimensions {
-            width: ope.width(),
-            height: ope.height(),
+            width: ope.width() - 1,
+            height: ope.height() - 1,
         },
         Point { x: 0, y: 0 },
-        [0.0, 180.0],
-        [0.0, 1.0],
-        [0.0, 1.0],
+        Range {
+            lower: 0.0,
+            upper: 360.0,
+        },
+        Range {
+            lower: 0.0,
+            upper: 1.0,
+        },
+        Range {
+            lower: 0.0,
+            upper: 1.0,
+        },
         1,
         "4k_rain",
     );
