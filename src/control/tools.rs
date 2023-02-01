@@ -1,22 +1,25 @@
-use super::colorspaces::{self, Pixel, HSV};
+use crate::control::colorspaces::{self, Pixel, HSV};
 use crate::misc::helpers::*;
-use image::DynamicImage;
 use rgb::RGB;
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, PartialEq, PartialOrd, Default, Eq, Ord, Hash)]
 /// Controls position adjustment parameters
 pub struct PositionAdjust {
     dimension: Dimensions<u32>,
     top_left_corner: Point<u32>,
-    base_image: DynamicImage,
+    edge_image: Vec<RGB<u8>>,
 }
 impl PositionAdjust {
     /// Returns a struct with all fields zero
-    pub fn new(dimension: Dimensions<u32>, top_left_corner: Point<u32>) -> PositionAdjust {
+    pub fn new(
+        dimension: Dimensions<u32>,
+        top_left_corner: Point<u32>,
+        edge_image: Vec<RGB<u8>>,
+    ) -> PositionAdjust {
         Self {
             dimension,
             top_left_corner,
-            base_image: DynamicImage::new_luma8(dimension.width, dimension.height),
+            edge_image,
         }
     }
 }
@@ -29,7 +32,7 @@ pub struct ColorArea {
     hue: Range<f64>,
     saturation: Range<f64>,
     value: Range<f64>,
-    identification: Identification<u8>,
+    pub identification: Identification<u8>,
 }
 impl ColorArea {
     /// Returns a percentage match to the set parameters

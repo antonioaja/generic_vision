@@ -22,23 +22,23 @@ pub struct Model {
 
 impl Model {
     /// Returns blank Model object with random uuid
-    pub fn new(name: &'static str, image_path: String) -> Model {
-        Self {
-            pos_adjust: PositionAdjust::new(
-                Dimensions {
-                    width: 0,
-                    height: 0,
-                },
-                Point { x: 0, y: 0 },
-            ),
-            color_tools: vec![],
-            identification: Identification {
-                name,
-                id: Uuid::new_v4(),
-            },
-            image_path,
-        }
-    }
+    // pub fn new(name: &'static str, image_path: String) -> Model {
+    //     Self {
+    //         pos_adjust: PositionAdjust::new(
+    //             Dimensions {
+    //                 width: 0,
+    //                 height: 0,
+    //             },
+    //             Point { x: 0, y: 0 },
+    //         ),
+    //         color_tools: vec![],
+    //         identification: Identification {
+    //             name,
+    //             id: Uuid::new_v4(),
+    //         },
+    //         image_path,
+    //     }
+    // }
 
     pub fn compare() {}
 
