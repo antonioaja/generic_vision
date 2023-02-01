@@ -1,7 +1,7 @@
 use super::colorspaces::{self, Pixel, HSV};
+use crate::misc::helpers::*;
 use image::DynamicImage;
 use rgb::RGB;
-use crate::misc::helpers::*;
 
 #[derive(Clone, Debug, Default, PartialEq)]
 /// Controls position adjustment parameters
@@ -29,8 +29,7 @@ pub struct ColorArea {
     hue: Range<f64>,
     saturation: Range<f64>,
     value: Range<f64>,
-    id: u8,
-    name: &'static str,
+    identification: Identification<u8>,
 }
 impl ColorArea {
     /// Returns a percentage match to the set parameters
@@ -66,8 +65,7 @@ impl ColorArea {
         hue: Range<f64>,
         saturation: Range<f64>,
         value: Range<f64>,
-        id: u8,
-        name: &'static str,
+        identification: Identification<u8>,
     ) -> ColorArea {
         Self {
             dimension,
@@ -75,10 +73,7 @@ impl ColorArea {
             hue,
             saturation,
             value,
-            id,
-            name,
+            identification,
         }
     }
 }
-
-

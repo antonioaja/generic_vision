@@ -16,14 +16,13 @@ const ONE_DEGREE: f64 = std::f64::consts::PI / 180.0;
 pub struct Model {
     pos_adjust: PositionAdjust,
     color_tools: Vec<ColorArea>,
-    uuid: Uuid,
-    name: String,
+    identification: Identification<Uuid>,
     image_path: String,
 }
 
 impl Model {
     /// Returns blank Model object with random uuid
-    pub fn new(name: String, image_path: String) -> Model {
+    pub fn new(name: &'static str, image_path: String) -> Model {
         Self {
             pos_adjust: PositionAdjust::new(
                 Dimensions {
@@ -33,8 +32,10 @@ impl Model {
                 Point { x: 0, y: 0 },
             ),
             color_tools: vec![],
-            uuid: Uuid::new_v4(),
-            name,
+            identification: Identification {
+                name,
+                id: Uuid::new_v4(),
+            },
             image_path,
         }
     }

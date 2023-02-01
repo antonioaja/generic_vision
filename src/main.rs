@@ -29,8 +29,10 @@ fn main() -> Result<()> {
             lower: 0.70,
             upper: 1.0,
         },
-        1,
-        "4k_rain",
+        Identification {
+            name: "bluey",
+            id: 1,
+        },
     );
 
     let color_match_percentage =

@@ -82,3 +82,9 @@ where
         false
     }
 }
+
+#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
+pub struct Identification<T> {
+    pub name: &'static str,
+    pub id: T,
+}
