@@ -1,6 +1,8 @@
 use rgb::RGB;
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd, Deserialize, Serialize)]
 /// The HSV pixel
 pub struct HSV<T> {
     /// Hue (in degrees)
@@ -98,7 +100,7 @@ impl HSV<f64> {
     }
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd, Deserialize, Serialize)]
 pub struct Luma<T> {
     pub luminance: T,
 }

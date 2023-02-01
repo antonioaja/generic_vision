@@ -1,0 +1,21 @@
+name = ""
+uuid = "86d2b349-af9b-467c-9726-514c3a6efc65"
+date_created = 2023-02-01T20:31:00
+last_edited = 2023-02-01T20:31:00
+path_to_master = "test.png"
+path_to_edges = "edge.png"
+
+[pos_adjust]
+width = 0
+length = 0
+corner = [0,0]
+
+[color-1]
+width = 34
+length = 50
+corner = [216,44]
+hue = [175.0, 240.0]
+saturation = [0.10,1.0]
+value = [0.70,1.0]
+id = 1
+name = "bluey"

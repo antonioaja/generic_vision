@@ -1,5 +1,7 @@
 use anyhow::*;
 use clap::Parser;
+use serde_derive::Deserialize;
+use serde_derive::Serialize;
 use std::ffi::OsStr;
 use std::path::Path;
 
@@ -22,14 +24,18 @@ pub fn get_extension(filename: &str) -> Result<&str> {
         .context(format!("Could not find extension for {}", filename))
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
+#[derive(
+    Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash, Deserialize, Serialize,
+)]
 /// A 2d point in space
 pub struct Point<N> {
     pub x: N,
     pub y: N,
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
+#[derive(
+    Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash, Deserialize, Serialize,
+)]
 /// Dimensions of a 2d object
 pub struct Dimensions<N> {
     pub width: N,
@@ -46,7 +52,9 @@ where
     }
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
+#[derive(
+    Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash, Deserialize, Serialize,
+)]
 /// A ranged object
 pub struct Range<N> {
     pub lower: N,
@@ -83,7 +91,9 @@ where
     }
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
+#[derive(
+    Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash, Deserialize, Serialize,
+)]
 pub struct Identification<T> {
     pub name: &'static str,
     pub id: T,

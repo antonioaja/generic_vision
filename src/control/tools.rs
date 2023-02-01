@@ -1,6 +1,8 @@
 use crate::control::colorspaces::{self, Pixel, HSV};
 use crate::misc::helpers::*;
 use rgb::RGB;
+use serde_derive::Serialize;
+use serde_derive::Deserialize;
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, Default, Eq, Ord, Hash)]
 /// Controls position adjustment parameters
@@ -24,7 +26,7 @@ impl PositionAdjust {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default)]
+#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default, Serialize)]
 /// Controls color area tool
 pub struct ColorArea {
     dimension: Dimensions<u32>,
@@ -32,7 +34,7 @@ pub struct ColorArea {
     hue: Range<f64>,
     saturation: Range<f64>,
     value: Range<f64>,
-    pub identification: Identification<u8>,
+    identification: Identification<u8>,
 }
 impl ColorArea {
     /// Returns a percentage match to the set parameters
