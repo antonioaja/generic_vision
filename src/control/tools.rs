@@ -1,6 +1,7 @@
 use super::colorspaces::{self, Pixel, HSV};
 use image::DynamicImage;
 use rgb::RGB;
+use crate::misc::helpers::*;
 
 #[derive(Clone, Debug, Default, PartialEq)]
 /// Controls position adjustment parameters
@@ -55,7 +56,7 @@ impl ColorArea {
             }
         }
 
-        count as f64 / total_area as f64
+        f64::round(count as f64 / total_area as f64 * 100.0) / 100.0
     }
 
     ///  Creates Struct given parameters
@@ -80,54 +81,4 @@ impl ColorArea {
     }
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
-/// A 2d point in space
-pub struct Point<N> {
-    pub x: N,
-    pub y: N,
-}
 
-#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
-/// Dimensions of 2d object
-pub struct Dimensions<N> {
-    pub width: N,
-    pub height: N,
-}
-
-#[derive(Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash)]
-/// A ranged object
-pub struct Range<N> {
-    pub lower: N,
-    pub upper: N,
-}
-
-impl<T> Range<T>
-where
-    T: std::cmp::PartialOrd,
-{
-    /// Returns whether given value is within a given range (inclusive)
-    pub fn within_range_inclusive(&self, value: T) -> bool {
-        if self.upper > self.lower {
-            if value <= self.upper && value >= self.lower {
-                return true;
-            }
-        } else if value >= self.upper && value <= self.lower {
-            return true;
-        }
-
-        false
-    }
-
-    /// Returns whether given value is within a given range (exclusive)
-    pub fn within_range_exclusive(&self, value: T) -> bool {
-        if self.upper > self.lower {
-            if value < self.upper && value > self.lower {
-                return true;
-            }
-        } else if value > self.upper && value < self.lower {
-            return true;
-        }
-
-        false
-    }
-}

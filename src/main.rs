@@ -3,37 +3,30 @@ pub mod misc;
 mod tests;
 
 use anyhow::*;
-use control::tools::Point;
 use image::EncodableLayout;
 use rgb::FromSlice;
 
-use crate::control::tools::*;
-// use clap::Parser;
-// use imageproc::geometric_transformations::rotate_about_center;
-// use imageproc::geometric_transformations::Interpolation;
-
-// use crate::misc::helpers::get_extension;
-// use crate::misc::helpers::Args;
+use crate::misc::helpers::*;
 
 fn main() -> Result<()> {
-    let ope = image::open("4k_rain.png").context("Could not open test_rotate.png")?;
+    let ope = image::open("test_rotate.png").context("Could not open test_rotate.png")?;
 
     let color_test = control::tools::ColorArea::new(
         Dimensions {
-            width: ope.width() - 1,
-            height: ope.height() - 1,
+            width: 34,
+            height: 50,
         },
-        Point { x: 0, y: 0 },
+        Point { x: 216, y: 44 },
         Range {
-            lower: 0.0,
-            upper: 360.0,
+            lower: 175.0,
+            upper: 240.0,
         },
         Range {
-            lower: 0.0,
+            lower: 0.10,
             upper: 1.0,
         },
         Range {
-            lower: 0.0,
+            lower: 0.70,
             upper: 1.0,
         },
         1,
@@ -43,7 +36,7 @@ fn main() -> Result<()> {
     let color_match_percentage =
         color_test.check(ope.clone().into_rgb8().as_bytes().as_rgb(), ope.width());
 
-    println!("{}", color_match_percentage);
+    println!("{}%", color_match_percentage * 100.0);
 
     Ok(())
 }
