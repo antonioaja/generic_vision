@@ -28,13 +28,9 @@ fn main() -> Result<()> {
 
     // println!("{}", var);
 
-    let color_test = control::tools::ColorArea::default();
+    //let color_test = control::tools::ColorArea::default();
 
-    color_test.check(
-        ope.clone().into_rgb8().as_bytes().as_rgb(),
-        ope.width(),
-        ope.height(),
-    );
+    //color_test.check(ope.clone().into_rgb8().as_bytes().as_rgb(), ope.width());
 
     //println!("{},{}\n{}", ope.width(), ope.height(), ope.width() * ope.height());
 
