@@ -1,8 +1,7 @@
-use crate::control::colorspaces::{self, Pixel, HSV};
+use crate::control::colorspaces::{Pixel, HSV};
 use crate::misc::helpers::*;
 use rgb::RGB;
 use serde_derive::Serialize;
-use serde_derive::Deserialize;
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, Default, Eq, Ord, Hash)]
 /// Controls position adjustment parameters
@@ -38,18 +37,13 @@ pub struct ColorArea {
 }
 impl ColorArea {
     /// Returns a percentage match to the set parameters
-    pub fn check(&self, input: &[RGB<u8>], width: u32) -> f64 {
-        let source: Vec<HSV<f64>> = input
-            .iter()
-            .map(|x| colorspaces::HSV::from_rgb8(*x))
-            .collect();
-
+    pub fn check(&self, input: Vec<HSV<f64>>, width: u32) -> f64 {
         let mut count: u32 = 0;
         let total_area = self.dimension.height * self.dimension.width;
 
         for y in self.top_left_corner.y..=(self.top_left_corner.y + self.dimension.height) {
             for x in self.top_left_corner.x..=(self.top_left_corner.x + self.dimension.width) {
-                let pixel = source.get_pixel(x, y, width);
+                let pixel = input.get_pixel(x, y, width);
 
                 if self.hue.within_range_inclusive(pixel.h)
                     && self.saturation.within_range_inclusive(pixel.s)

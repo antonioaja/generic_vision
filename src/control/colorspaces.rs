@@ -152,6 +152,15 @@ where
         self[(one + x) as usize]
     }
 }
+impl<T> Pixel<HSV<T>> for [HSV<T>]
+where
+    T: Copy,
+{
+    fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<T> {
+        let one = y * w;
+        self[(one + x) as usize]
+    }
+}
 impl<T> Pixel<Luma<T>> for Vec<Luma<T>>
 where
     T: Copy,
