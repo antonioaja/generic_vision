@@ -9,8 +9,13 @@ use rgb::FromSlice;
 use crate::control::colorspaces::HSV;
 use crate::misc::helpers::*;
 
+use rayon::prelude::*;
+use std::time::Instant;
+
 fn main() -> Result<()> {
-    let ope = image::open("test.png").context("Could not open test_rotate.png")?;
+    let now = Instant::now();
+
+    let ope = image::open("many_bodes.png").context("Could not open test_rotate.png")?;
 
     let color_test = control::tools::ColorArea::new(
         Dimensions {
@@ -27,7 +32,7 @@ fn main() -> Result<()> {
             upper: 1.0,
         },
         Range {
-            lower: 0.70,
+            lower: 0.30,
             upper: 1.0,
         },
         Identification {
@@ -41,13 +46,15 @@ fn main() -> Result<()> {
         .into_rgb8()
         .as_bytes()
         .as_rgb()
-        .iter()
+        .par_iter()
         .map(|x| HSV::from_rgb8(*x))
         .collect();
 
     let color_match_percentage = color_test.check(ope_hsv, ope.width());
 
     println!("{}%", color_match_percentage * 100.0);
+
+    println!("{} ms", now.elapsed().as_millis());
 
     Ok(())
 }

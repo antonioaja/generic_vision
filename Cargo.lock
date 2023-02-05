@@ -276,6 +276,7 @@ dependencies = [
  "image",
  "image-compare",
  "imageproc",
+ "rayon",
  "rgb",
  "serde",
  "serde_derive",

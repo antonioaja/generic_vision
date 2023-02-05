@@ -41,18 +41,20 @@ impl ColorArea {
         let mut count: u32 = 0;
         let total_area = self.dimension.height * self.dimension.width;
 
-        for y in self.top_left_corner.y..=(self.top_left_corner.y + self.dimension.height) {
-            for x in self.top_left_corner.x..=(self.top_left_corner.x + self.dimension.width) {
-                let pixel = input.get_pixel(x, y, width);
+        (self.top_left_corner.y..=(self.top_left_corner.y + self.dimension.height)).for_each(|y| {
+            (self.top_left_corner.x..=(self.top_left_corner.x + self.dimension.width)).for_each(
+                |x| {
+                    let pixel = input.get_pixel(x, y, width);
 
-                if self.hue.within_range_inclusive(pixel.h)
-                    && self.saturation.within_range_inclusive(pixel.s)
-                    && self.value.within_range_inclusive(pixel.v)
-                {
-                    count += 1;
-                }
-            }
-        }
+                    if self.hue.within_range_inclusive(pixel.h)
+                        && self.saturation.within_range_inclusive(pixel.s)
+                        && self.value.within_range_inclusive(pixel.v)
+                    {
+                        count += 1;
+                    }
+                },
+            );
+        });
 
         f64::round(count as f64 / total_area as f64 * 100.0) / 100.0
     }
