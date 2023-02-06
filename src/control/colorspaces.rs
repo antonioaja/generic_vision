@@ -1,3 +1,5 @@
+use num_traits::cast::AsPrimitive;
+use num_traits::Bounded;
 use rgb::RGB;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
@@ -12,24 +14,27 @@ pub struct HSV<T> {
     /// Value (between 0 and 1)
     pub v: T,
 }
-impl HSV<f64> {
-    /// Converts an 8-bit rgb pixel into an hsv pixel
-    pub fn from_rgb8(rgb_pixel: RGB<u8>) -> HSV<f64> {
-        let r_prime = rgb_pixel.r as f64 / 255.0;
-        let g_prime = rgb_pixel.g as f64 / 255.0;
-        let b_prime = rgb_pixel.b as f64 / 255.0;
+impl<N: std::convert::Into<f64> + Copy + 'static> HSV<N> {
+    /// Converts an rgb pixel into an hsv pixel
+    pub fn from_rgb<T: std::convert::Into<f64> + Bounded>(rgb_pixel: RGB<T>) -> HSV<N>
+    where
+        f64: AsPrimitive<N>,
+    {
+        let r_prime: f64 = rgb_pixel.r.into() / T::max_value().into();
+        let g_prime: f64 = rgb_pixel.g.into() / T::max_value().into();
+        let b_prime: f64 = rgb_pixel.b.into() / T::max_value().into();
 
-        let c_max = r_prime.max(g_prime.max(b_prime));
-        let c_min = r_prime.min(g_prime.min(b_prime));
+        let c_max: f64 = r_prime.max(g_prime.max(b_prime));
+        let c_min: f64 = r_prime.min(g_prime.min(b_prime));
 
         // Account for floating point error (avoids divide by zero error)
-        let delta = if c_max - c_min == 0.0 {
+        let delta: f64 = if c_max - c_min == 0.0 {
             f64::MIN_POSITIVE
         } else {
             c_max - c_min
         };
 
-        let mut hue = if delta == 0.0 {
+        let mut hue: f64 = if delta == 0.0 {
             0.0
         } else if c_max == r_prime {
             60.0 * (((g_prime - b_prime) / delta) % 6.0)
@@ -46,26 +51,31 @@ impl HSV<f64> {
             hue += 360.0;
         }
 
-        let saturation = if c_max == 0.0 { 0.0 } else { delta / c_max };
+        let saturation: f64 = if c_max == 0.0 { 0.0 } else { delta / c_max };
 
         HSV {
-            h: hue,
-            s: saturation,
-            v: c_max,
+            h: hue.as_(),
+            s: saturation.as_(),
+            v: c_max.as_(),
         }
     }
 
-    pub fn new(h: f64, s: f64, v: f64) -> HSV<f64> {
+    pub fn new(h: N, s: N, v: N) -> HSV<N> {
         HSV { h, s, v }
     }
 
-    /// Converts an hsv pixel to an 8-bit rbg pixel
-    pub fn to_rgb8(hsv_pixel: HSV<f64>) -> Option<RGB<u8>> {
-        let c = hsv_pixel.v * hsv_pixel.s;
-        let x = c * (1.0 - ((hsv_pixel.h / 60.0) % 2.0 - 1.0).abs());
-        let m = hsv_pixel.v - c;
+    /// Converts an hsv pixel to an rbg pixel
+    pub fn to_rgb<T: std::marker::Copy + 'static + Bounded + std::convert::Into<f64>>(
+        hsv_pixel: HSV<N>,
+    ) -> Option<RGB<T>>
+    where
+        f64: AsPrimitive<T>,
+    {
+        let c: f64 = &hsv_pixel.v.into() * hsv_pixel.s.into();
+        let x: f64 = c * (1.0 - ((hsv_pixel.h.into() as f64 / 60.0) % 2.0 - 1.0).abs());
+        let m: f64 = hsv_pixel.v.into() - c;
 
-        let (r_prime, g_prime, b_prime) = match hsv_pixel.h as u32 {
+        let (r_prime, g_prime, b_prime) = match hsv_pixel.h.into() as u32 {
             0..=59 => (c, x, 0.0),
             60..=119 => (x, c, 0.0),
             120..=179 => (0.0, c, x),
@@ -75,27 +85,27 @@ impl HSV<f64> {
             _ => return None,
         };
 
-        // Account for u8 overflow
-        let r = if (r_prime + m) * 255.0 > 255.0 {
+        // Account for overflow
+        let r: f64 = if (r_prime + m) * T::max_value().into() > T::max_value().into() {
             0.0
         } else {
-            (r_prime + m) * 255.0
+            (r_prime + m) * T::max_value().into()
         };
-        let g = if (g_prime + m) * 255.0 > 255.0 {
+        let g: f64 = if (g_prime + m) * T::max_value().into() > T::max_value().into() {
             0.0
         } else {
-            (g_prime + m) * 255.0
+            (g_prime + m) * T::max_value().into()
         };
-        let b = if (b_prime + m) * 255.0 > 255.0 {
+        let b: f64 = if (b_prime + m) * T::max_value().into() > T::max_value().into() {
             0.0
         } else {
-            (b_prime + m) * 255.0
+            (b_prime + m) * T::max_value().into()
         };
 
         Some(RGB {
-            r: r.round() as u8,
-            g: g.round() as u8,
-            b: b.round() as u8,
+            r: r.round().as_(),
+            g: g.round().as_(),
+            b: b.round().as_(),
         })
     }
 }
@@ -144,15 +154,6 @@ pub trait Pixel<T> {
     fn get_pixel(&self, x: u32, y: u32, w: u32) -> T;
 }
 impl<T> Pixel<HSV<T>> for Vec<HSV<T>>
-where
-    T: Copy,
-{
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<T> {
-        let one = y * w;
-        self[(one + x) as usize]
-    }
-}
-impl<T> Pixel<HSV<T>> for [HSV<T>]
 where
     T: Copy,
 {

@@ -47,7 +47,7 @@ fn main() -> Result<()> {
         .as_bytes()
         .as_rgb()
         .par_iter()
-        .map(|x| HSV::from_rgb8(*x))
+        .map(|x| HSV::from_rgb(*x))
         .collect();
 
     let color_match_percentage = color_test.check(ope_hsv, ope.width());

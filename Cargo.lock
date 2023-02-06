@@ -276,6 +276,7 @@ dependencies = [
  "image",
  "image-compare",
  "imageproc",
+ "num-traits",
  "rayon",
  "rgb",
  "serde",
