@@ -4,7 +4,9 @@ use rgb::RGB;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[derive(
+    Copy, Clone, Debug, Default, PartialEq, PartialOrd, Deserialize, Serialize, Eq, Hash, Ord,
+)]
 /// The HSV pixel
 pub struct HSV<T> {
     /// Hue (in degrees)
@@ -110,20 +112,22 @@ impl<N: std::convert::Into<f64> + Copy + 'static> HSV<N> {
     }
 }
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd, Deserialize, Serialize)]
+#[derive(
+    Copy, Clone, Debug, Default, PartialEq, PartialOrd, Deserialize, Serialize, Eq, Hash, Ord,
+)]
 pub struct Luma<T> {
     pub luminance: T,
 }
 impl<T> Luma<T> {
     /// Converts an 8-bit RGB pixel into a Luma pixel
-    pub fn from_rgb8(rgb_pixel: RGB<u8>) -> Luma<T>
+    pub fn from_rgb<N: std::convert::Into<f64>>(rgb_pixel: RGB<N>) -> Luma<T>
     where
         T: std::convert::From<f64>,
     {
         Luma {
-            luminance: ((0.299 * (rgb_pixel.r as f64).powi(2)
-                + 0.587 * (rgb_pixel.g as f64).powi(2)
-                + 0.114 * (rgb_pixel.b as f64).powi(2))
+            luminance: ((0.299 * (rgb_pixel.r.into()).powi(2)
+                + 0.587 * (rgb_pixel.g.into()).powi(2)
+                + 0.114 * (rgb_pixel.b.into()).powi(2))
             .sqrt()
             .round())
             .into(),
@@ -136,9 +140,8 @@ impl<T> Luma<T> {
     }
 
     /// Converts a luma pixel into an 8-bit RGB pixel
-    pub fn to_rgb8(luma_pixel: Luma<T>) -> RGB<u8>
+    pub fn to_rgb<N: std::convert::From<T>>(luma_pixel: Luma<T>) -> RGB<N>
     where
-        u8: From<T>,
         T: Copy,
     {
         RGB {
