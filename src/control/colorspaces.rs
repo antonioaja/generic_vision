@@ -119,7 +119,7 @@ pub struct Luma<T> {
     pub luminance: T,
 }
 impl<T> Luma<T> {
-    /// Converts an 8-bit RGB pixel into a Luma pixel
+    /// Converts an RGB pixel into a Luma pixel
     pub fn from_rgb<N: std::convert::Into<f64>>(rgb_pixel: RGB<N>) -> Luma<T>
     where
         T: std::convert::From<f64>,
@@ -139,7 +139,7 @@ impl<T> Luma<T> {
         Luma { luminance }
     }
 
-    /// Converts a luma pixel into an 8-bit RGB pixel
+    /// Converts a luma pixel into an RGB pixel
     pub fn to_rgb<N: std::convert::From<T>>(luma_pixel: Luma<T>) -> RGB<N>
     where
         T: Copy,
