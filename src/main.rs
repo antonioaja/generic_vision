@@ -13,16 +13,16 @@ use rayon::prelude::*;
 use std::time::Instant;
 
 fn main() -> Result<()> {
+    let ope = image::open("OAKD-0014.png").context("Could not open test_rotate.png")?;
+    
     let now = Instant::now();
-
-    let ope = image::open("many_bodes.png").context("Could not open test_rotate.png")?;
-
+    
     let color_test = control::tools::ColorArea::new(
         Dimensions {
-            width: 34,
-            height: 50,
+            width: 60,
+            height: 140,
         },
-        Point { x: 216, y: 44 },
+        Point { x: 1060, y: 420 },
         Range {
             lower: 90.0,
             upper: 270.0,
