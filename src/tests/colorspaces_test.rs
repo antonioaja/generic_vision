@@ -1,6 +1,6 @@
 use anyhow::*;
-use rgb::RGB;
 use rayon::prelude::*;
+use rgb::RGB;
 
 use crate::control::colorspaces::HSV;
 
