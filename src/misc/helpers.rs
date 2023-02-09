@@ -1,4 +1,3 @@
-use anyhow::*;
 use clap::Parser;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
@@ -17,11 +16,13 @@ pub struct Args {
     pub output_file: String,
 }
 
-pub fn get_extension(filename: &str) -> Result<&str> {
+/// Returns extension (if available) an input string
+/// Example: "test.png" => "png"
+pub fn get_extension(filename: &str) -> &str {
     Path::new(filename)
         .extension()
         .and_then(OsStr::to_str)
-        .context(format!("Could not find extension for {}", filename))
+        .unwrap_or("")
 }
 
 #[derive(

@@ -6,7 +6,8 @@ use anyhow::*;
 use image::EncodableLayout;
 use rgb::FromSlice;
 
-use crate::control::colorspaces::HSV;
+use crate::control::colorspaces::{Luma, HSV};
+use crate::control::tools::PositionAdjust;
 use crate::misc::helpers::*;
 
 use rayon::prelude::*;
@@ -42,20 +43,38 @@ fn main() -> Result<()> {
     );
 
     let some_width = ope.width();
+    let some_height = ope.height();
 
-    let ope_hsv = ope
+    // let lol = PositionAdjust::find_curl(
+    //     ope.into_rgb8().as_bytes().as_rgb().to_vec(),
+    //     Dimensions {
+    //         width: some_width,
+    //         height: some_height,
+    //     },
+    // );
+
+    // let ope_hsv: Vec<HSV<f64>> = ope
+    //     .into_rgb8()
+    //     .as_bytes()
+    //     .as_rgb()
+    //     .par_iter()
+    //     .map(|x| HSV::from_rgb(*x))
+    //     .collect();
+    let _ope_luma: Vec<Luma<u8>> = ope
         .into_rgb8()
         .as_bytes()
         .as_rgb()
         .par_iter()
-        .map(|x| HSV::from_rgb(*x))
+        .map(|x| Luma::from_rgb(*x))
         .collect();
 
-    println!("{} ms", now.elapsed().as_millis());
+    //println!("{:?}", ope_luma);
 
-    let color_match_percentage = color_test.check(ope_hsv, some_width);
+    // println!("{} ms", now.elapsed().as_millis());
 
-    println!("{}%", color_match_percentage * 100.0);
+    // let color_match_percentage = color_test.check(ope_hsv, some_width);
+
+    // println!("{}%", color_match_percentage * 100.0);
 
     println!("{} ms", now.elapsed().as_millis());
 

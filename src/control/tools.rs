@@ -1,6 +1,9 @@
-use crate::control::colorspaces::{Pixel, HSV};
+use crate::control::colorspaces::{Luma, Pixel, HSV};
 use crate::misc::helpers::*;
+use image::{DynamicImage, EncodableLayout, RgbImage};
+use rayon::prelude::*;
 use rgb::RGB;
+use rgb::{ComponentBytes, FromSlice};
 use serde_derive::Serialize;
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, Default, Eq, Ord, Hash)]
@@ -8,20 +11,45 @@ use serde_derive::Serialize;
 pub struct PositionAdjust {
     dimension: Dimensions<u32>,
     top_left_corner: Point<u32>,
-    edge_image: Vec<RGB<u8>>,
+    edge_image: Vec<Luma<u8>>,
 }
 impl PositionAdjust {
     /// Returns a struct with all fields zero
     pub fn new(
         dimension: Dimensions<u32>,
         top_left_corner: Point<u32>,
-        edge_image: Vec<RGB<u8>>,
+        edge_image: Vec<Luma<u8>>,
     ) -> PositionAdjust {
         Self {
             dimension,
             top_left_corner,
             edge_image,
         }
+    }
+
+    pub fn find_curl(des_image: Vec<RGB<u8>>, des_dimensions: Dimensions<u32>) -> f64 {
+        let initial_conversion = DynamicImage::ImageRgb8(
+            RgbImage::from_raw(
+                des_dimensions.width,
+                des_dimensions.height,
+                des_image.as_bytes().to_vec(),
+            )
+            .unwrap(),
+        )
+        .into_luma8();
+
+        let lumaed: Vec<Luma<u8>> = edge_detection::canny(initial_conversion, 1.2, 0.2, 0.01)
+            .as_image()
+            .into_rgb8()
+            .as_bytes()
+            .as_rgb()
+            .par_iter()
+            .map(|x| Luma::from_rgb(*x))
+            .collect();
+
+        println!("{:?}", lumaed);
+
+        0.0
     }
 }
 

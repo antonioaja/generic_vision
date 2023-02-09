@@ -122,7 +122,8 @@ impl<T> Luma<T> {
     /// Converts an RGB pixel into a Luma pixel
     pub fn from_rgb<N: std::convert::Into<f64>>(rgb_pixel: RGB<N>) -> Luma<T>
     where
-        T: std::convert::From<f64>,
+        T: std::convert::Into<f64> + std::marker::Copy + 'static,
+        f64: AsPrimitive<T>,
     {
         Luma {
             luminance: ((0.299 * (rgb_pixel.r.into()).powi(2)
@@ -130,7 +131,7 @@ impl<T> Luma<T> {
                 + 0.114 * (rgb_pixel.b.into()).powi(2))
             .sqrt()
             .round())
-            .into(),
+            .as_(),
         }
     }
 
