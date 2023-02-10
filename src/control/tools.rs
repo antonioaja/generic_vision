@@ -1,4 +1,4 @@
-use crate::control::colorspaces::{Luma, Pixel, HSV};
+use crate::misc::colorspaces::{Luma, Pixel, HSV};
 use crate::misc::helpers::*;
 use image::{DynamicImage, EncodableLayout, RgbImage};
 use rayon::prelude::*;

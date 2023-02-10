@@ -2,7 +2,7 @@ use anyhow::*;
 use rayon::prelude::*;
 use rgb::RGB;
 
-use crate::control::colorspaces::HSV;
+use crate::misc::colorspaces::HSV;
 
 #[test]
 fn rgb8_to_hsv_f64() -> Result<()> {

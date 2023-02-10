@@ -6,7 +6,7 @@ use anyhow::*;
 use image::EncodableLayout;
 use rgb::FromSlice;
 
-use crate::control::colorspaces::Luma;
+use crate::misc::colorspaces::Luma;
 //use crate::control::tools::PositionAdjust;
 use crate::misc::helpers::*;
 
