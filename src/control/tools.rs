@@ -1,5 +1,6 @@
-use crate::misc::colorspaces::{Luma, Pixel, HSV};
+use crate::misc::colorspaces::{Luma, HSV};
 use crate::misc::helpers::*;
+use crate::misc::linear_algebra::MatrixSlice2d;
 use image::{DynamicImage, EncodableLayout, RgbImage};
 use rayon::prelude::*;
 use rgb::RGB;
@@ -72,7 +73,7 @@ impl ColorArea {
         (self.top_left_corner.y..=(self.top_left_corner.y + self.dimension.height)).for_each(|y| {
             (self.top_left_corner.x..=(self.top_left_corner.x + self.dimension.width)).for_each(
                 |x| {
-                    let pixel = input.get_pixel(x, y, width);
+                    let pixel = input.interpret_position(x, y, width, 0);
 
                     if self.hue.within_range_inclusive(pixel.h)
                         && self.saturation.within_range_inclusive(pixel.s)

@@ -1,0 +1,18 @@
+pub trait MatrixSlice2d<T> {
+    /// Interpret slice as a 2d coordinate system, returning a specific pixel
+    fn interpret_position(&self, x: u32, y: u32, w: u32, h: u32) -> T;
+}
+#[macro_export]
+macro_rules! matrix_slice_2d_impl {
+    ($typ:ident) => {
+        impl<T> crate::misc::linear_algebra::MatrixSlice2d<$typ<T>> for Vec<$typ<T>>
+        where
+            T: Copy,
+        {
+            fn interpret_position(&self, x: u32, y: u32, w: u32, _h: u32) -> $typ<T> {
+                let one = y * w;
+                self[(one + x) as usize]
+            }
+        }
+    };
+}

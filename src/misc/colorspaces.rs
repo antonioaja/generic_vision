@@ -4,6 +4,8 @@ use rgb::RGB;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
 
+use crate::matrix_slice_2d_impl;
+
 #[derive(
     Copy, Clone, Debug, Default, PartialEq, PartialOrd, Deserialize, Serialize, Eq, Hash, Ord,
 )]
@@ -153,34 +155,6 @@ impl<T> Luma<T> {
     }
 }
 
-pub trait Pixel<T> {
-    /// Interpret slice as a 2d coordinate system, returning a specific pixel
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> T;
-}
-impl<T> Pixel<HSV<T>> for Vec<HSV<T>>
-where
-    T: Copy,
-{
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> HSV<T> {
-        let one = y * w;
-        self[(one + x) as usize]
-    }
-}
-impl<T> Pixel<Luma<T>> for Vec<Luma<T>>
-where
-    T: Copy,
-{
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> Luma<T> {
-        let one = y * w;
-        self[(one + x) as usize]
-    }
-}
-impl<T> Pixel<RGB<T>> for Vec<RGB<T>>
-where
-    T: Copy,
-{
-    fn get_pixel(&self, x: u32, y: u32, w: u32) -> RGB<T> {
-        let one = y * w;
-        self[(one + x) as usize]
-    }
-}
+matrix_slice_2d_impl!(HSV);
+matrix_slice_2d_impl!(RGB);
+matrix_slice_2d_impl!(Luma);
