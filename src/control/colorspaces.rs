@@ -73,8 +73,8 @@ impl<N: std::convert::Into<f64> + Copy + 'static> HSV<N> {
     where
         f64: AsPrimitive<T>,
     {
-        let c: f64 = &hsv_pixel.v.into() * hsv_pixel.s.into();
-        let x: f64 = c * (1.0 - ((hsv_pixel.h.into() as f64 / 60.0) % 2.0 - 1.0).abs());
+        let c: f64 = hsv_pixel.v.into() * hsv_pixel.s.into();
+        let x: f64 = c * (1.0 - ((hsv_pixel.h.into() / 60.0) % 2.0 - 1.0).abs());
         let m: f64 = hsv_pixel.v.into() - c;
 
         let (r_prime, g_prime, b_prime) = match hsv_pixel.h.into() as u32 {

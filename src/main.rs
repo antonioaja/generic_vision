@@ -6,8 +6,8 @@ use anyhow::*;
 use image::EncodableLayout;
 use rgb::FromSlice;
 
-use crate::control::colorspaces::{Luma, HSV};
-use crate::control::tools::PositionAdjust;
+use crate::control::colorspaces::Luma;
+//use crate::control::tools::PositionAdjust;
 use crate::misc::helpers::*;
 
 use rayon::prelude::*;
@@ -18,7 +18,7 @@ fn main() -> Result<()> {
 
     let now = Instant::now();
 
-    let color_test = control::tools::ColorArea::new(
+    let _color_test = control::tools::ColorArea::new(
         Dimensions {
             width: 60,
             height: 140,
@@ -42,8 +42,8 @@ fn main() -> Result<()> {
         },
     );
 
-    let some_width = ope.width();
-    let some_height = ope.height();
+    let _some_width = ope.width();
+    let _some_height = ope.height();
 
     // let lol = PositionAdjust::find_curl(
     //     ope.into_rgb8().as_bytes().as_rgb().to_vec(),
