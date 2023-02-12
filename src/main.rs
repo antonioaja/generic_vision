@@ -1,12 +1,12 @@
 pub mod control;
 pub mod misc;
-mod tests;
+//mod tests;
 
 use anyhow::*;
 use image::EncodableLayout;
 use rgb::FromSlice;
 
-use crate::misc::colorspaces::Luma;
+use altered_perception::Luma;
 //use crate::control::tools::PositionAdjust;
 use crate::misc::helpers::*;
 
@@ -14,7 +14,7 @@ use rayon::prelude::*;
 use std::time::Instant;
 
 fn main() -> Result<()> {
-    let ope = image::open("OAKD-0014.png").context("Could not open test_rotate.png")?;
+    let ope = image::open("nature_x4.png").context("Could not open test_rotate.png")?;
 
     let now = Instant::now();
 

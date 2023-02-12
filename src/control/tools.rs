@@ -1,11 +1,16 @@
-use crate::misc::colorspaces::{Luma, HSV};
+use crate::matrix_slice_2d_impl;
 use crate::misc::helpers::*;
 use crate::misc::linear_algebra::MatrixSlice2d;
+use altered_perception::{Luma, HSV};
 use image::{DynamicImage, EncodableLayout, RgbImage};
 use rayon::prelude::*;
 use rgb::RGB;
 use rgb::{ComponentBytes, FromSlice};
 use serde_derive::Serialize;
+
+matrix_slice_2d_impl!(Luma);
+matrix_slice_2d_impl!(RGB);
+matrix_slice_2d_impl!(HSV);
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, Default, Eq, Ord, Hash)]
 /// Controls position adjustment parameters
