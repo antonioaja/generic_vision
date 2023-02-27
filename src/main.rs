@@ -1,6 +1,5 @@
 pub mod control;
 pub mod misc;
-//mod tests;
 
 use anyhow::*;
 use image::EncodableLayout;

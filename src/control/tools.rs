@@ -33,6 +33,7 @@ impl PositionAdjust {
         }
     }
 
+    /// Finds the angle offset of the given image when compared to master image
     pub fn find_curl(des_image: Vec<RGB<u8>>, des_dimensions: Dimensions<u32>) -> f64 {
         let initial_conversion = DynamicImage::ImageRgb8(
             RgbImage::from_raw(
@@ -52,8 +53,6 @@ impl PositionAdjust {
             .par_iter()
             .map(|x| Luma::from_rgb(*x))
             .collect();
-
-        println!("{:?}", lumaed);
 
         0.0
     }
