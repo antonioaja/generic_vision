@@ -56,6 +56,16 @@ impl PositionAdjust {
 
         0.0
     }
+
+    fn rotate_point<T: std::convert::Into<f64> + std::convert::From<f64> + Copy>(
+        p: Point<T>,
+        theta: f64,
+    ) -> Point<T> {
+        Point {
+            x: (theta.cos() * p.x.into() - theta.sin() * p.y.into()).into(),
+            y: (theta.sin() * p.x.into() + theta.cos() * p.y.into()).into(),
+        }
+    }
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default, Serialize)]

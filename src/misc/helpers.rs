@@ -3,6 +3,7 @@ use serde_derive::Deserialize;
 use serde_derive::Serialize;
 use std::ffi::OsStr;
 use std::path::Path;
+use std::cmp;
 
 #[derive(Parser, Debug)]
 #[clap(version, about = "A generic vision program.", long_about = None)]
@@ -98,4 +99,32 @@ where
 pub struct Identification<T> {
     pub name: &'static str,
     pub id: T,
+}
+
+#[derive(
+    Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash, Deserialize, Serialize,
+)]
+/// A rectangular object
+pub struct Rectangle<N> {
+    pub left: N,
+    pub right: N,
+    pub top: N,
+    pub bottom: N,
+}
+impl<T: std::ops::Add<Output = T> + Copy> Rectangle<T> {
+    pub fn create_rectangle(top_left: Point<T>, bottom_right: Point<T>) -> Self {
+        Self {
+            left: top_left.x,
+            right: top_left.x + bottom_right.x,
+            top: top_left.y,
+            bottom: top_left.y + bottom_right.y,
+        }
+    }
+
+    // Returns overlapped area of two rectangles
+    // pub fn overlap_area(&self, rect2: Rectangle<T>) -> f64 {
+    //     let x_overlap = cmp::max(0.0, cmp::min(self.right, rect2.right));
+        
+    //     0.0
+    // }
 }
