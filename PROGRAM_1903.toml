@@ -1,15 +1,23 @@
+# Identifiers
 name = ""
 uuid = "86d2b349-af9b-467c-9726-514c3a6efc65"
-date_created = 2023-02-01T20:31:00
-last_edited = 2023-02-01T20:31:00
+date_created = 2023-02-01T20:31:00-05:00
+last_edited = 2023-02-01T20:31:00-05:00
+
+# Location of reference images
 path_to_master = "test.png"
 path_to_edges = "edge.png"
 
+# Indicates how many tools to look for
+number_of_color_tools = 1
+
+# Position adjustment parameters
 [pos_adjust]
 width = 0
 length = 0
 corner = [0,0]
 
+# Color tools' parameters
 [color-1]
 width = 34
 length = 50

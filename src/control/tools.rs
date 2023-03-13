@@ -57,6 +57,7 @@ impl PositionAdjust {
         0.0
     }
 
+    // Rotates point around origin
     fn rotate_point<T: std::convert::Into<f64> + std::convert::From<f64> + Copy>(
         p: Point<T>,
         theta: f64,

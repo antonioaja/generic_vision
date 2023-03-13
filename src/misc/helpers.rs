@@ -1,9 +1,9 @@
 use clap::Parser;
 use serde_derive::Deserialize;
 use serde_derive::Serialize;
+use std::cmp;
 use std::ffi::OsStr;
 use std::path::Path;
-use std::cmp;
 
 #[derive(Parser, Debug)]
 #[clap(version, about = "A generic vision program.", long_about = None)]
@@ -124,7 +124,7 @@ impl<T: std::ops::Add<Output = T> + Copy> Rectangle<T> {
     // Returns overlapped area of two rectangles
     // pub fn overlap_area(&self, rect2: Rectangle<T>) -> f64 {
     //     let x_overlap = cmp::max(0.0, cmp::min(self.right, rect2.right));
-        
+
     //     0.0
     // }
 }
