@@ -93,11 +93,9 @@ where
     }
 }
 
-#[derive(
-    Copy, Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash, Deserialize, Serialize,
-)]
+#[derive(Clone, Debug, Default, PartialOrd, Ord, PartialEq, Eq, Hash, Deserialize, Serialize)]
 pub struct Identification<T> {
-    pub name: &'static str,
+    pub name: String,
     pub id: T,
 }
 
