@@ -1,19 +1,34 @@
 pub mod control;
 pub mod misc;
+pub mod settings;
 
 use anyhow::*;
 use image::EncodableLayout;
 use rgb::FromSlice;
 
 use altered_perception::Luma;
-//use crate::control::tools::PositionAdjust;
 use crate::misc::helpers::*;
 
 use rayon::prelude::*;
-use std::time::Instant;
+use std::io::Write;
+use std::{fs::File, time::Instant};
 
 fn main() -> Result<()> {
-    let ope = image::open("nature_x4.png").context("Could not open test_rotate.png")?;
+    let ope = image::open("edge.png").context("Could not open test_rotate.png")?;
+
+    let mut out = File::create("settings.txt").context("Could not create settings.txt")?;
+
+    write!(
+        out,
+        "{:?}",
+        settings::Settings::get_model_info("PROGRAM_1903.toml".to_string())
+    )
+    .context("Could not write to settings.txt")?;
+
+    // println!(
+    //     "{:?}",
+    //     settings::Settings::get_model_info("PROGRAM_1903.toml".to_string())
+    // );
 
     let now = Instant::now();
 
@@ -36,7 +51,7 @@ fn main() -> Result<()> {
             upper: 1.0,
         },
         Identification {
-            name: "bluey",
+            name: "bluey".to_string(),
             id: 1,
         },
     );
