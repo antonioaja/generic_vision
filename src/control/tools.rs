@@ -69,7 +69,7 @@ impl PositionAdjust {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Default, Serialize)]
+#[derive(Clone, Debug, PartialEq, PartialOrd, Default, Serialize)]
 /// Controls color area tool
 pub struct ColorArea {
     dimension: Dimensions<u32>,
