@@ -8,9 +8,6 @@ last_edited = 2023-02-01T20:31:00-05:00
 path_to_master = "test.png"
 path_to_edges = "edge.png"
 
-# Indicates how many tools to look for
-number_of_color_tools = 1
-
 # Position adjustment parameters
 [pos_adjust]
 width = 0
@@ -18,7 +15,7 @@ length = 0
 corner = [0,0]
 
 # Color tools' parameters
-[color-1]
+[[color]]
 width = 34
 length = 50
 corner = [216,44]
@@ -27,3 +24,13 @@ saturation = [0.10,1.0]
 value = [0.70,1.0]
 id = 1
 name = "bluey"
+
+[[color]]
+width = 34
+length = 50
+corner = [216,44]
+hue = [175.0, 240.0]
+saturation = [0.9,1.0]
+value = [0.0,1.0]
+id = 2
+name = "whitey"
