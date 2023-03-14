@@ -1,11 +1,12 @@
 use image::EncodableLayout;
 use rgb::{FromSlice, RGB};
 use uuid::Uuid;
+use serde_derive::{Deserialize, Serialize};
 
 use crate::control::tools::*;
 use crate::misc::helpers::*;
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq, PartialOrd, Serialize, Deserialize)]
 /// An image to compare against
 pub struct Model {
     pos_adjust: PositionAdjust,

@@ -16,12 +16,12 @@ anyhow = "1.0.58"
 image = "0.24.5"
 edge-detection = "0.2.6"
 imageproc = "0.23.0"
-uuid = {version = "1.3.0", features = ["v4"] }
+uuid = {version = "1.3.0", features = ["v4", "serde"] }
 image-compare = "0.2.4"
-rgb = "0.8.34"
+rgb = { version = "0.8.34", features = ["serde"] }
 toml = "0.7.1"
 serde = "1.0.152"
 serde_derive = "1.0.152"
 rayon = "1.6.1"
 num-traits = "0.2"
-altered_perception = "0.1.0"
+altered_perception = "0.2.0"

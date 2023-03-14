@@ -99,7 +99,7 @@ impl Settings {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, PartialOrd, Eq, Ord)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, PartialOrd, Eq, Ord, Hash)]
 struct PositionAdjustInterpretation {
     pub width: u32,
     pub length: u32,

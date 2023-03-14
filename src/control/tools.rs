@@ -1,18 +1,19 @@
-use crate::matrix_slice_2d_impl;
-use crate::misc::helpers::*;
-use crate::misc::linear_algebra::MatrixSlice2d;
 use altered_perception::{Luma, HSV};
 use image::{DynamicImage, EncodableLayout, RgbImage};
 use rayon::prelude::*;
 use rgb::RGB;
 use rgb::{ComponentBytes, FromSlice};
-use serde_derive::Serialize;
+use serde_derive::{Deserialize, Serialize};
+
+use crate::matrix_slice_2d_impl;
+use crate::misc::helpers::*;
+use crate::misc::linear_algebra::MatrixSlice2d;
 
 matrix_slice_2d_impl!(Luma);
 matrix_slice_2d_impl!(RGB);
 matrix_slice_2d_impl!(HSV);
 
-#[derive(Clone, Debug, PartialEq, PartialOrd, Default, Eq, Ord, Hash)]
+#[derive(Clone, Debug, PartialEq, PartialOrd, Default, Eq, Ord, Hash, Serialize, Deserialize)]
 /// Controls position adjustment parameters
 pub struct PositionAdjust {
     dimension: Dimensions<u32>,
@@ -69,7 +70,7 @@ impl PositionAdjust {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, PartialOrd, Default, Serialize)]
+#[derive(Clone, Debug, PartialEq, PartialOrd, Default, Serialize, Deserialize)]
 /// Controls color area tool
 pub struct ColorArea {
     dimension: Dimensions<u32>,
