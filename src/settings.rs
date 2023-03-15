@@ -35,7 +35,7 @@ impl Settings {
             .ok();
 
         if opt_settings.is_none() {
-            return None;
+            None
         } else {
             let settings = opt_settings.unwrap();
 
