@@ -1,7 +1,5 @@
 use clap::Parser;
-use serde_derive::Deserialize;
-use serde_derive::Serialize;
-use std::cmp;
+use serde_derive::{Deserialize, Serialize};
 use std::ffi::OsStr;
 use std::path::Path;
 

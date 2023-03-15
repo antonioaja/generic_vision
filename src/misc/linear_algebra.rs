@@ -11,7 +11,7 @@ pub trait MatrixSlice2d<T> {
 #[macro_export]
 macro_rules! matrix_slice_2d_impl {
     ($typ:ident) => {
-        impl<T> crate::misc::linear_algebra::MatrixSlice2d<$typ<T>> for Vec<$typ<T>>
+        impl<T> $crate::misc::linear_algebra::MatrixSlice2d<$typ<T>> for Vec<$typ<T>>
         where
             T: Copy,
         {

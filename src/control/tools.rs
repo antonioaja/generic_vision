@@ -46,7 +46,7 @@ impl PositionAdjust {
         )
         .into_luma8();
 
-        let lumaed: Vec<Luma<u8>> = edge_detection::canny(initial_conversion, 1.2, 0.2, 0.01)
+        let _lumaed: Vec<Luma<u8>> = edge_detection::canny(initial_conversion, 1.2, 0.2, 0.01)
             .as_image()
             .into_rgb8()
             .as_bytes()
