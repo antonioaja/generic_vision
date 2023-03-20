@@ -16,14 +16,13 @@ checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
 name = "altered_perception"
-version = "0.2.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4df9794cf5b6d191148b3165123cf946292dedcedae2302687b4fbad8664698"
+checksum = "7139915bcd1a586546c362abee31e48af0c8e2906252454f2a40b6b1bdbebc9a"
 dependencies = [
  "num-traits",
  "rgb",
  "serde",
- "serde_derive",
 ]
 
 [[package]]

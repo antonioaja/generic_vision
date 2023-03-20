@@ -24,4 +24,4 @@ serde = "1.0.152"
 serde_derive = "1.0.152"
 rayon = "1.6.1"
 num-traits = "0.2"
-altered_perception = "0.2.0"
+altered_perception = { version = "0.4.0", features = ["serde"]}
