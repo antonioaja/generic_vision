@@ -16,8 +16,14 @@ macro_rules! matrix_slice_2d_impl {
             T: Copy,
         {
             fn interpret_position(&self, x: u32, y: u32, w: u32, h: u32) -> $typ<T> {
-                let one = y * w;
-                self[(one + x) as usize]
+                let total = w * h;
+                let des_array_member = y * w + x;
+
+                if des_array_member < total {
+                    return self[des_array_member as usize];
+                }
+
+                self[0]
             }
             fn rotate(&self, _theta: f64) -> Self {
                 todo!()
