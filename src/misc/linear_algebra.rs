@@ -15,7 +15,7 @@ macro_rules! matrix_slice_2d_impl {
         where
             T: Copy,
         {
-            fn interpret_position(&self, x: u32, y: u32, w: u32, _h: u32) -> $typ<T> {
+            fn interpret_position(&self, x: u32, y: u32, w: u32, h: u32) -> $typ<T> {
                 let one = y * w;
                 self[(one + x) as usize]
             }

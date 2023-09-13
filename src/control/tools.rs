@@ -82,24 +82,22 @@ pub struct ColorArea {
 }
 impl ColorArea {
     /// Returns a percentage match to the set parameters
-    pub fn check(&self, input: Vec<HSV<f64>>, width: u32) -> f64 {
+    pub fn check(&self, input: Vec<HSV<f64>>, width: u32, height: u32) -> f64 {
         let mut count: u32 = 0;
         let total_area = self.dimension.height * self.dimension.width;
+        
+        for y in self.top_left_corner.y..=(self.top_left_corner.y + self.dimension.height) {
+            for x in self.top_left_corner.x..=(self.top_left_corner.x + self.dimension.width) {
+                let pixel: HSV<f64> = input.interpret_position(x, y, width, height);
 
-        (self.top_left_corner.y..=(self.top_left_corner.y + self.dimension.height)).for_each(|y| {
-            (self.top_left_corner.x..=(self.top_left_corner.x + self.dimension.width)).for_each(
-                |x| {
-                    let pixel = input.interpret_position(x, y, width, 0);
-
-                    if self.hue.within_range_inclusive(pixel.h)
-                        && self.saturation.within_range_inclusive(pixel.s)
-                        && self.value.within_range_inclusive(pixel.v)
-                    {
-                        count += 1;
-                    }
-                },
-            );
-        });
+                if self.hue.within_range_inclusive(pixel.h)
+                    && self.saturation.within_range_inclusive(pixel.s)
+                    && self.value.within_range_inclusive(pixel.v)
+                {
+                    count += 1;
+                }
+            }
+        }
 
         f64::round(count as f64 / total_area as f64 * 100.0) / 100.0
     }

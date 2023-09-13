@@ -10,7 +10,7 @@ use crate::misc::helpers::*;
 /// An image to compare against
 pub struct Model {
     pos_adjust: PositionAdjust,
-    color_tools: Vec<ColorArea>,
+    pub color_tools: Vec<ColorArea>,
     identification: Identification<Uuid>,
     image_data: Vec<RGB<u8>>,
 }

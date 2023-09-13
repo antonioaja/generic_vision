@@ -48,7 +48,7 @@ impl Settings {
                     },
                     Point {
                         x: settings.color[i].corner[0],
-                        y: settings.color[i].corner[0],
+                        y: settings.color[i].corner[1],
                     },
                     Range {
                         lower: settings.color[i].hue[0],
